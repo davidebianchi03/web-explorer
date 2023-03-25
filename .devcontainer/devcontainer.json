@@ -1,25 +1,21 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"name": "Node.js & TypeScript",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:0-18",
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// TODO: use a dbms
-	// "features": {
-	// 	"ghcr.io/devcontainers-contrib/features/mysql-homebrew:1": {}
-	// }
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [3000]
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "yarn install",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"name": "ACME OrderService",
+	"dockerComposeFile": [
+		"docker-compose.yml",
+	],
+	// The name of the following service has to match one of the services in docker-compose.yml
+	"service": "devcontainer",
+	"workspaceFolder": "/src",
+	"extensions": [
+		"firsttris.vscode-jest-runner",
+		"esbenp.prettier-vscode",
+		"eamodio.gitlens",
+		"ms-vscode.vscode-typescript-tslint-plugin",
+		"ms-vsliveshare.vsliveshare",
+		"rtbenfield.vscode-jest-test-adapter",
+		"dbaeumer.vscode-eslint",
+	],
+	"shutdownAction": "stopCompose",
+	"remoteUser": "node",
 }
