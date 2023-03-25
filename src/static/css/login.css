@@ -1,0 +1,89 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Regular.ttf');
+}
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    min-width: 100vw;
+    background-color: #0044ff;
+    font-family: 'Poppins';
+}
+
+body {
+    background-image: url('../img/login-wallpaper.jpg');
+}
+
+.login-form {
+    width: 300px;
+    padding: 20px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    top: 10vh;
+    border-radius: 20px;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.login-form .form-input{
+    position: relative;
+    padding: 10px;
+    text-align: center;
+}
+
+.login-form .form-input label {
+    position: absolute;
+    font-size: 12px;
+    color: #979797;
+    top: -5px;
+}
+
+.login-form .form-input input {
+    background-color: transparent;
+    border: solid #dfdfdf 1px;
+    border-radius: 4px;
+    font-size: 14px;
+    padding:  8px 10px;
+    outline: none;
+    width: 90%;
+    font-family: 'Poppins';
+}
+
+.login-form .form-input.valid input{
+    border: solid #3cd300 1px;
+    background: linear-gradient(90deg, #3cd30018, #3cd3002a);
+} 
+
+.login-form .form-input.error input{
+    border: solid #d30000 1px;
+    background: linear-gradient(90deg, #d3000018, #d300002a);
+} 
+
+.btn-submit{
+    background: linear-gradient(90deg, #0084ff, #0077ff);
+    padding:  8px 10px;
+    border: none;
+    width: 100px;
+    height: 40px;
+    border-radius: 8px;
+    color: white;
+    font-family: 'Poppins';
+    margin: auto;
+}
+
+.forgot-password{
+    font-family: 'Poppins';
+    font-size: 12px;
+    text-align: left;
+    padding: 0px 20px;
+}
+
+.forgot-password a{
+    color: #979797;
+}

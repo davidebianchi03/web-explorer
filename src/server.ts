@@ -1,19 +1,20 @@
 import express from 'express'
-import { Router } from 'express'
-
+import { router as index_router } from "./routes/index";
+import { router as auth_router } from "./routes/auth";
+import { join } from 'path';
 const app = express()
-const router = Router()
 
-console.log("Your process id is: " + process.pid)
+console.log("Your process id is: " + process.pid);
 
-router.get('/', async(req, res)=>{
-    res.status(200).json({message : 'Hello world'})
-})
+// routes
+app.use('', index_router);
+app.use('/auth', auth_router);
 
-app.use('/api', router)
+// static files
+app.use("/static", express.static(join(__dirname, "static")));
 
-const port = 3000
+const port = 3000;
 
-app.listen(port, ()=>{
-    console.log(`server listening on http://localhost:${port}f`)
+app.listen(port, () => {
+    console.log(`server listening on http://localhost:${port}`)
 })
