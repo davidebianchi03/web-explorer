@@ -11,11 +11,13 @@
     "build:ts": "npx tsc && npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/pages/**/*.*  build/pages",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
+    "prisma:push": "prisma db push",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^4.11.0",
     "body-parser": "^1.20.2",
     "express": "^4.18.2"
   },
@@ -26,6 +28,7 @@
     "dotenv": "^16.0.0",
     "eslint": "^8.36.0",
     "nodemon": "^2.0.15",
+    "prisma": "^4.11.0",
     "ts-node": "^10.5.0",
     "typescript": "^5.0.2"
   }

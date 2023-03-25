@@ -15,28 +15,15 @@ services:
     ports:
       - 3000:3000
   db:
-    image: mysql:5.7
-    container_name: db
+    image: mariadb:10.3
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: webexplorer
-      MYSQL_USER: phpmyadmin
-      MYSQL_PASSWORD: password
-    ports:
-      - "6033:3306"
-    volumes:
-      - dbdata:/var/lib/mysql
+
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: pma
-    links:
-      - db
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
+    image: phpmyadmin
     restart: always
     ports:
-      - 8081:80
-volumes:
-  dbdata:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
