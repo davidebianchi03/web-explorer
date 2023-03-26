@@ -31,43 +31,59 @@ body {
     text-align: center;
 }
 
-.login-form .form-input{
+.form-input {
     position: relative;
     padding: 10px;
     text-align: center;
 }
 
-.login-form .form-input label {
+.form-input label {
     position: absolute;
     font-size: 12px;
     color: #979797;
     top: -5px;
 }
 
-.login-form .form-input input {
+.form-input input {
     background-color: transparent;
     border: solid #dfdfdf 1px;
     border-radius: 4px;
     font-size: 14px;
-    padding:  8px 10px;
+    padding: 8px 10px;
     outline: none;
     width: 90%;
     font-family: 'Poppins';
 }
 
-.login-form .form-input.valid input{
+.form-input.valid input {
     border: solid #3cd300 1px;
     background: linear-gradient(90deg, #3cd30018, #3cd3002a);
-} 
+}
 
-.login-form .form-input.error input{
+.form-input.error input {
     border: solid #d30000 1px;
     background: linear-gradient(90deg, #d3000018, #d300002a);
-} 
+}
 
-.btn-submit{
+.form-input-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 0px 10px;
+}
+
+.form-input-checkbox label {
+    position: inherit;
+    font-size: 14px;
+    color: #979797;
+}
+
+.form-input-checkbox input[type="checkbox"] {
+    
+}
+
+.btn-submit {
     background: linear-gradient(90deg, #0084ff, #0077ff);
-    padding:  8px 10px;
+    padding: 8px 10px;
     border: none;
     width: 100px;
     height: 40px;
@@ -77,13 +93,13 @@ body {
     margin: auto;
 }
 
-.forgot-password{
+.forgot-password {
     font-family: 'Poppins';
     font-size: 12px;
     text-align: left;
     padding: 0px 20px;
 }
 
-.forgot-password a{
+.forgot-password a {
     color: #979797;
 }

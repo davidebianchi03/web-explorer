@@ -10,13 +10,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 // models
 model User {
-  id            Int       @id @default(autoincrement())
-  username      String    @unique
-  name          String?   
-  surname       String?   
-  created_at    DateTime  @default(now())
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
+  password   String
+  name       String?
+  surname    String?
+  created_at DateTime  @default(now())
+  sessions   Session[]
 }
 
+model Session {
+  id              String    @id @default(uuid())
+  created_at      DateTime  @default(now())
+  expire          Boolean
+  expiration_date DateTime?
+  user            User      @relation(fields: [user_id], references: [id])
+  user_id         Int
+}
