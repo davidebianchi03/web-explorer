@@ -15,6 +15,11 @@ class Window {
         var window = `
         <div class="window" id="`+this.window_uuid+`">
             <div class="draggable-bar">
+                <div class="buttons">
+                    <button class="minimize"><img src="/static/img/minimize.png"></button>
+                    <button class="maximize"><img src="/static/img/maximize.png"></button>
+                    <button class="close"><img src="/static/img/close.png"></button>
+                </div>
             <div>
         </div>`
         this.container.append(window);
@@ -23,15 +28,12 @@ class Window {
         $("#" + this.window_uuid).children("div.draggable-bar").mousedown((e) => {
             e = e || window.event;
             e.preventDefault();
-            let starting_x = e.clientX;
-            let starting_y = e.clientY;
+            let offset_x = e.clientX - $("#" + this.window_uuid).position().left;
 
             $(document).mousemove((e) => {
                 e = e || window.event;
                 e.preventDefault();
-                let x = e.clientX - starting_x;
-                let y = e.clientY - starting_y;
-                $("#" + this.window_uuid).css({ top: e.clientY, left: x});
+                $("#" + this.window_uuid).css({ top: e.clientY, left:e.clientX - offset_x});
             });
 
             $(document).mouseup((e) => {
