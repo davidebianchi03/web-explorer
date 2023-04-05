@@ -29,3 +29,14 @@ model Session {
   user            User      @relation(fields: [user_id], references: [id])
   user_id         Int
 }
+
+enum ConnectionType {
+  LOCAL
+}
+
+model Connection {
+  id              String         @id @default(uuid())
+  name            String
+  path            String
+  connection_type ConnectionType @default(LOCAL)
+}

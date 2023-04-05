@@ -1,7 +1,10 @@
-import { Router } from 'express';
+import { Router } from "express";
+import prisma from "../prisma";
 export const router = Router();
 
-router.get('/', async (req, res) => {
-    // res.status(200).json({message : 'Hello world'})
-    res.status(200).render("pages/index");
+router.get("/", async (req, res) => {
+  let connections = prisma.connection.findMany();
+  res.status(200).render("pages/index", {
+    connections: connections,
+  });
 });

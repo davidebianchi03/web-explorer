@@ -15,19 +15,27 @@
 
 <body>
     <%- include('../partials/sidebar'); %>
-    <div id="windows-container">
-
-    </div>
+        <div id="windows-container">
+            <!-- Display connections -->
+            <% for(var i=0; i<connections.length; i++){%>
+                <div>
+                    <img src="/static/img/folder.svg">
+                    <span>
+                        <%=connections[i].name%>
+                    </span>
+                </div>
+            <%}%>
+        </div>
 </body>
 
 <!-- Scripts -->
 <script src="/static/lib/jquery-3.6.4.min.js"></script>
 <script src="/static/js/window.js"></script>
 <script>
-    $(document).ready(()=>{
-        var window = new Window("#windows-container");
-        window.draw_window();
-    })
+    // $(document).ready(() => {
+    //     var window = new Window("#windows-container");
+    //     window.draw_window();
+    // })
 </script>
 
 </html>
