@@ -2,6 +2,7 @@ import express from "express";
 import { router as index_router } from "./routes/index";
 import { router as auth_router } from "./routes/auth";
 import { router as data_origin_router } from "./routes/data-origin";
+import { router as data_router } from "./routes/data";
 import path, { join } from "path";
 import prisma from "./prisma";
 import bcrypt from "bcrypt";
@@ -39,6 +40,7 @@ async function main() {
   app.use("", index_router);
   app.use("/auth", auth_router);
   app.use("/data-origin", data_origin_router);
+  app.use("/data", data_router);
 
   const port = 3000;
 

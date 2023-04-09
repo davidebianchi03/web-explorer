@@ -5,6 +5,17 @@
   margin-top: 40px;
 }
 
+.connection-input .edit-button{
+    border: none;
+    border-radius: 7px;
+    width: 50px;
+    height: 35px;
+    background-color: rgb(0, 140, 255);
+    color: white;
+    float: right;
+    margin-bottom: 5px;
+}
+
 .connection-input .name-section{
     width: 100%;
     display: flex;
@@ -17,24 +28,11 @@
     font-size: 14px;
     outline: none;
     border: none;
-    border-bottom-left-radius: 5px;
-    border-top-left-radius: 5px;
+    border-radius: 5px;
     padding: 0px 5px;
+    height: 35px;
 }
 
-.connection-input .name-section .edit-button{
-    width: 50px;  
-    height: 35px;
-    padding: 5px;
-    background-color: #dadada;
-    border: none;
-    border-bottom-right-radius: 5px;
-    border-top-right-radius: 5px;
-    color: #353535;
-    font-family: 'Poppins';
-    font-size: 14px;
-    outline: none;
-}
 
 .connection-input .path-section {
   width: 100%;
@@ -65,18 +63,6 @@
     outline: none;
     border: none;
     padding: 0px 5px;
-}
-
-.connection-input .path-section .edit-button{
-    width: 60px;  
-    height: 35px;
-    padding: 5px;
-    background-color: #dadada;
-    border: none;
     border-bottom-right-radius: 5px;
     border-top-right-radius: 5px;
-    color: #353535;
-    font-family: 'Poppins';
-    font-size: 14px;
-    outline: none;
 }

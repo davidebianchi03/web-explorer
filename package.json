@@ -7,7 +7,7 @@
     "build": "tsc",
     "start:dev": "node -r dotenv/config dist/server.js",
     "start:watch": "nodemon --legacy-watch -r dotenv/config src/server.ts",
-    "start": "npm run build:ts && node ./build/server.js",
+    "start:js": "npm run build:ts && node ./build/server.js",
     "build:ts": "npx tsc && npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/pages/**/*.*  build/pages",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
