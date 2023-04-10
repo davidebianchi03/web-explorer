@@ -9,9 +9,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
         integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="/static/lib/datatable/datatables.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/css/general.css">
     <link rel="stylesheet" href="/static/css/window.css">
     <link rel="stylesheet" href="/static/css/index.css">
+    
 </head>
 
 <body>
@@ -31,10 +33,12 @@
 
 <!-- Scripts -->
 <script src="/static/lib/jquery-3.6.4.min.js"></script>
+<script src="/static/lib/datatable/datatables.min.js"></script>
 <script src="/static/js/window.js"></script>
+<script src="/static/js/file-explorer.js"></script>
 <script>
     function CreateWindow(connection_uuid){
-        var window = new Window("#windows-container", connection_uuid);
+        var window = new FileExplorer("#windows-container", connection_uuid);
         window.draw_window();
     }
 </script>

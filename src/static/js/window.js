@@ -7,12 +7,13 @@ constGenerateUUID = () =>
   );
 
 class Window {
-  constructor(container_id, connection_uuid) {
+  constructor(container_id) {
     this.container = $(container_id);
     this.window_uuid = constGenerateUUID();
     this.width = 800;
     this.height = 400;
-    this.connection_uuid = connection_uuid;
+    this.window_body = null;
+    this.maximized = false;
   }
 
   draw_window() {
@@ -29,37 +30,10 @@ class Window {
                 </div>
             </div>
             <div class="window-body">
-              <table class="children-list">
-                <thead>
-                  <th></th>
-                  <th>Name</th>
-                  <th>Type</th>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
             </div>
         </div>`;
     this.container.append(window);
-
-    // populate window with initial values
-    // TODO: take root value from settings or from /data/root/:id
-    $.getJSON("/data/children/" + this.connection_uuid + "/%2F", (data) => {
-      // TODO: handle 404
-      for (let i = 0; i < data.children.length; i++) {
-        let child = data.children[i];
-        // TODO: use bootstrap datatable
-        $("#" + this.window_uuid)
-          .children("div.window-body")
-          .children("table.children-list")
-          .children("tbody").append(`
-              <tr>
-                <td>// TODO: icons</td>
-                <td>${child.name}</td>
-                <td>${child.type == "dir" ? "Folder" : "File"}</td>
-              </tr>`);
-      }
-    });
+    this.window_body = $("#" + this.window_uuid).children("div.window-body");
 
     // buttons
     $("#" + this.window_uuid).width(this.width);
@@ -70,7 +44,7 @@ class Window {
         e = e || window.event;
         e.preventDefault();
         let offset_x = e.clientX - $("#" + this.window_uuid).position().left;
-
+        
         $(document).mousemove((e) => {
           e = e || window.event;
           e.preventDefault();
@@ -78,6 +52,7 @@ class Window {
             top: e.clientY,
             left: e.clientX - offset_x,
           });
+          this.maximized = false;
         });
 
         $(document).mouseup((e) => {
@@ -95,6 +70,35 @@ class Window {
       .children("button.close")
       .click(() => {
         $("#" + this.window_uuid).remove();
+      });
+
+    $("#" + this.window_uuid)
+      .children("div.draggable-bar")
+      .children("div.buttons")
+      .children("button.maximize")
+      .click(() => {
+        this.maximized = !this.maximized;
+        if (this.maximized) {
+          this.previous_position = {
+            top: $("#" + this.window_uuid).position().top,
+            left: $("#" + this.window_uuid).position().left,
+            width: $("#" + this.window_uuid).width(),
+            height: $("#" + this.window_uuid).height(),
+          };
+          $("#" + this.window_uuid).css({
+            top: 0,
+            left: 65,
+            width: "calc(100% - 80px)",
+            height: "100%",
+          });
+        } else {
+          $("#" + this.window_uuid).css({
+            top: this.previous_position.top,
+            left: this.previous_position.left,
+            width: this.previous_position.width,
+            height: this.previous_position.height,
+          });
+        }
       });
   }
 }
