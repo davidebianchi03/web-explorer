@@ -15,17 +15,16 @@ services:
     ports:
       - 3000:3000
   db:
-    image: mariadb:10.3
+    image: postgres:15.2-alpine
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
-
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - 8080:80
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
+    driver: local

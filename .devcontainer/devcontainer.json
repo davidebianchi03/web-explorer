@@ -1,6 +1,6 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"name": "ACME OrderService",
+	"name": "Web Explorer",
 	"dockerComposeFile": [
 		"docker-compose.yml",
 	],
@@ -15,6 +15,7 @@
 		"ms-vsliveshare.vsliveshare",
 		"rtbenfield.vscode-jest-test-adapter",
 		"dbaeumer.vscode-eslint",
+		"prisma.prisma",
 	],
 	"shutdownAction": "stopCompose",
 	"remoteUser": "node",

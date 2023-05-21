@@ -13,7 +13,16 @@
     <link rel="stylesheet" href="/static/css/general.css">
     <link rel="stylesheet" href="/static/css/window.css">
     <link rel="stylesheet" href="/static/css/index.css">
-    
+    <style>
+        input.path{
+            font-family: "Poppins";
+            outline: none;
+            width: calc(100% - 6px);
+            border: solid gray 1px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,7 +30,7 @@
         <div id="windows-container">
             <!-- Display connections -->
             <% for(var i=0; i<connections.length; i++){%>
-                <div class="folder" onclick="CreateWindow(`<%= connections[i].id %>`)">
+                <div class="folder" onclick="CreateWindow(`<%= connections[i].id %>`, `<%=connections[i].path%>`)">
                     <img src="/static/img/folder.svg">
                     <span>
                         <%=connections[i].name%>
@@ -37,8 +46,8 @@
 <script src="/static/js/window.js"></script>
 <script src="/static/js/file-explorer.js"></script>
 <script>
-    function CreateWindow(connection_uuid){
-        var window = new FileExplorer("#windows-container", connection_uuid);
+    function CreateWindow(connection_uuid, base_url){
+        var window = new FileExplorer("#windows-container", connection_uuid, base_url);
         window.draw_window();
     }
 </script>

@@ -39,7 +39,7 @@ router.get("/children/:id/:path", async (req, res) => {
   });
   if (connection) {
     if (connection.connection_type == ConnectionType.LOCAL) {
-      res.status(200).send(local_handler.GetChildren(req.params.path));
+      res.status(200).send(await local_handler.GetChildren(req.params.path));
     } else {
       res.status(400).send({
         error: "Connection type not allowed",

@@ -1,14 +1,16 @@
 class FileExplorer extends Window {
-  constructor(container_id, connection_uuid) {
+  constructor(container_id, connection_uuid, base_url) {
     super(container_id);
     this.connection_uuid = connection_uuid;
+    this.url = base_url;
   }
 
   draw_window() {
     super.draw_window();
 
     this.window_body.append(`
-        <table class="children-list">
+        <input type="text" class="path" placeholder="Enter Path">
+        <table class="children-list" style="font-size:14px;user-select:none;">
             <thead>
                 <th></th>
                 <th>Name</th>
@@ -19,48 +21,28 @@ class FileExplorer extends Window {
         </table>
         `);
 
+    // set path text input content
+    this.window_body.children("input.path").val(`${this.url}`);
+
     // draw table
-    var content_table = $("#" + this.window_uuid)
-      .children("div.window-body")
-      .children("table.children-list").DataTable({
-        "processing": true,
-        select: true,
-        bPaginate: false,
-        ajax: {
-            url:"/data/children/" + this.connection_uuid + "/%2F",
-            dataSrc: 'children',
-        },
-        columns: [
-            {
-                data: null
-            },
-            {
-                data: "name"
-            },
-            {
-                data: "type",
-                render: function(data, type, row){
-                    return data == "dir" ? "Folder" : "File";
-                }
-            }
-        ]
+    // TODO: handle http errors
+    var content_table = this.window_body
+      .children("table.children-list");
+
+    $.getJSON("/data/children/" +
+      this.connection_uuid +
+      "/" +
+      encodeURIComponent(this.url), (data) => {
+        console.log(data.children.length)
+        for (let i = 0; i < data.children.length; i++) {
+          content_table.children("tbody").append(`
+          <tr>
+            <td><img src="${data.children[i].icon}" style="width:20px;height:20px"></td>
+            <td>${data.children[i].name}data</td>
+            <td>${data.children[i].type}</td>
+          </tr>
+          `);
+        }
       });
-
-    // populate window with initial values
-    // TODO: take root value from settings or from /data/root/:id
-    // $.getJSON("/data/children/" + this.connection_uuid + "/%2F", (data) => {
-    //   // TODO: handle 404
-    //   for (let i = 0; i < data.children.length; i++) {
-    //     let child = data.children[i];
-    //     // TODO: use bootstrap datatable
-    //     content_table.children("tbody").append(`
-    //             <tr>
-    //                 <td>// TODO: icons</td>
-    //                 <td>${child.name}</td>
-    //                 <td>${child.type == "dir" ? "Folder" : "File"}</td>
-    //             </tr>`);
-    //   }
-
-    // });
   }
 }

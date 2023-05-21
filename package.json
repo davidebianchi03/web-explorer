@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start:dev": "node -r dotenv/config dist/server.js",
-    "start:watch": "nodemon --legacy-watch -r dotenv/config src/server.ts",
+    "start:dev": "ts-node ./src/server.ts",
+    "start:watch": "nodemon",
     "start:js": "npm run build:ts && node ./build/server.js",
     "build:ts": "npx tsc && npm run copy-assets",
     "copy-assets": "copyfiles -u 1 src/pages/**/*.*  build/pages",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "prisma:push": "prisma db push",
+    "prisma:studio": "npx prisma studio",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -25,7 +26,8 @@
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "ejs": "^3.1.9",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "is-binary-path": "^2.1.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
