@@ -44,15 +44,17 @@ class Window {
         e = e || window.event;
         e.preventDefault();
         let offset_x = e.clientX - $("#" + this.window_uuid).position().left;
-        
+
         $(document).mousemove((e) => {
           e = e || window.event;
           e.preventDefault();
-          $("#" + this.window_uuid).css({
-            top: e.clientY,
-            left: e.clientX - offset_x,
-          });
-          this.maximized = false;
+          // if (e.clientY > 0) { TODO: find a better solution
+            $("#" + this.window_uuid).css({
+              top: e.clientY,
+              left: e.clientX - offset_x,
+            });
+            this.maximized = false;
+          // }
         });
 
         $(document).mouseup((e) => {

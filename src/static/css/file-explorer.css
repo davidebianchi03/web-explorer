@@ -1,0 +1,8 @@
+.children-list{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.children-list tr:hover{
+    background-color: #e6e6e6;
+}

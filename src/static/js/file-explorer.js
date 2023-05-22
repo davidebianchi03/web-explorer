@@ -13,8 +13,8 @@ class FileExplorer extends Window {
         <table class="children-list" style="font-size:14px;user-select:none;">
             <thead>
                 <th></th>
-                <th>Name</th>
-                <th>Type</th>
+                <th>Name<div class="resizer"></div></th>
+                <th>Type<div class="resizer"></div></th>
             </thead>
             <tbody>
             </tbody>
@@ -26,23 +26,46 @@ class FileExplorer extends Window {
 
     // draw table
     // TODO: handle http errors
-    var content_table = this.window_body
-      .children("table.children-list");
+    var content_table = this.window_body.children("table.children-list");
 
-    $.getJSON("/data/children/" +
-      this.connection_uuid +
-      "/" +
-      encodeURIComponent(this.url), (data) => {
-        console.log(data.children.length)
-        for (let i = 0; i < data.children.length; i++) {
-          content_table.children("tbody").append(`
-          <tr>
-            <td><img src="${data.children[i].icon}" style="width:20px;height:20px"></td>
-            <td>${data.children[i].name}data</td>
-            <td>${data.children[i].type}</td>
-          </tr>
-          `);
-        }
-      });
+    const file_explorer_obj = this;
+    ResizableTable(content_table);
+    ReloadItems(this.url, this.connection_uuid, content_table).then(function () {
+
+
+    });
+
   }
+}
+
+async function ReloadItems(relative_path, connection_uuid, content_table) {
+  var data = await $.getJSON("/data/children/" + connection_uuid + "/" + encodeURIComponent(relative_path));
+  content_table.children("tbody").empty();
+  for (let i = 0; i < data.children.length; i++) {
+    content_table.children("tbody").append(`
+        <tr item-name="${data.children[i].name}" item-type="${data.children[i].type}">
+          <td>
+            <div class="horizontal-resizable-cell">
+              <img src="${data.children[i].icon}" style="width:20px;height:20px">
+            </div>
+          </td>
+            <div class="horizontal-resizable-cell" style="width:25%">
+              <td>${data.children[i].name}</td>
+            </div>
+          </td>
+          <td>
+            <div class="horizontal-resizable-cell" style="width:100%">
+              ${data.children[i].type}
+            </div>
+          </td>
+        </tr>
+        `);
+  }
+
+  content_table.children("tbody").children("tr").dblclick(function () {
+    if ($(this).attr('item-type') == "dir") {
+      relative_path += "/" + $(this).attr('item-name');
+      ReloadItems(relative_path, connection_uuid, content_table);
+    }
+  })
 }
