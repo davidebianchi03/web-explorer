@@ -6,3 +6,17 @@
 .children-list tr:hover{
     background-color: #e6e6e6;
 }
+
+.navigation-bar{
+    display: flex;
+}
+
+.navigation-bar .up-button{
+    width: 40px;
+    height: 25px;
+}
+
+.navigation-bar .up-button img{
+    width: 20px;
+    height: 20px;
+}

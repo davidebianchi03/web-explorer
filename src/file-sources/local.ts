@@ -10,6 +10,10 @@ export function GetRoot(): string {
   return root;
 }
 
+export function Exists(_path: string): boolean {
+  return fs.existsSync(_path);
+}
+
 export async function GetChildren(_path: string) {
   let children = fs.readdirSync(_path);
 

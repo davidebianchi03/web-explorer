@@ -7,9 +7,13 @@ class FileExplorer extends Window {
 
   draw_window() {
     super.draw_window();
-
     this.window_body.append(`
-        <input type="text" class="path" placeholder="Enter Path">
+        <div class="navigation-bar">
+          <button class="up-button" id="parent-btn-${this.window_uuid}">
+            <img src="/static/img/up.svg">
+          </button>
+          <input type="text" class="path" placeholder="Enter Path" id="path-${this.window_uuid}" value="dfsdf">
+        </div>
         <table class="children-list" style="font-size:14px;user-select:none;">
             <thead>
                 <th></th>
@@ -19,30 +23,40 @@ class FileExplorer extends Window {
             <tbody>
             </tbody>
         </table>
-        `);
+    `);
+
+    // add event listener on button parent click
+    $("#parent-btn-" + this.window_uuid).click(this.ParentFolder);
 
     // set path text input content
-    this.window_body.children("input.path").val(`${this.url}`);
+    $("#path-"+this.window_uuid).attr("value", this.url);
 
-    // draw table
-    // TODO: handle http errors
-    var content_table = this.window_body.children("table.children-list");
-
-    const file_explorer_obj = this;
-    ResizableTable(content_table);
-    ReloadItems(this.url, this.connection_uuid, content_table).then(function () {
-
-
-    });
-
+    this.DisplayFolders();
   }
-}
 
-async function ReloadItems(relative_path, connection_uuid, content_table) {
-  var data = await $.getJSON("/data/children/" + connection_uuid + "/" + encodeURIComponent(relative_path));
-  content_table.children("tbody").empty();
-  for (let i = 0; i < data.children.length; i++) {
-    content_table.children("tbody").append(`
+  ParentFolder = event => {
+    let splitted_path = this.url.split("/");
+    if (splitted_path.length > 0) {
+      if (this.url[this.url.length - 1] == '/') {
+        this.url = this.url.substring(0, this.url.length - 1);
+      }
+      let index = this.url.lastIndexOf("/");
+      if (index != -1) {
+        this.url = this.url.substring(0, index + 1);
+        this.DisplayFolders();
+      }
+    }
+  }
+
+  DisplayFolders = event => {
+    // remove old items
+    var content_table = this.window_body.children("table.children-list");
+    content_table.children("tbody").empty();
+
+    // populate table with new items
+    $.getJSON("/data/children/" + this.connection_uuid + "/" + encodeURIComponent(this.url)).then(data => {
+      for (let i = 0; i < data.children.length; i++) {
+        content_table.children("tbody").append(`
         <tr item-name="${data.children[i].name}" item-type="${data.children[i].type}">
           <td>
             <div class="horizontal-resizable-cell">
@@ -60,12 +74,21 @@ async function ReloadItems(relative_path, connection_uuid, content_table) {
           </td>
         </tr>
         `);
-  }
+      }
 
-  content_table.children("tbody").children("tr").dblclick(function () {
-    if ($(this).attr('item-type') == "dir") {
-      relative_path += "/" + $(this).attr('item-name');
-      ReloadItems(relative_path, connection_uuid, content_table);
-    }
-  })
+      // update the displayed path
+      $("#path-"+this.window_uuid).attr("value", this.url);
+
+      const file_explorer_parent = this;
+      content_table.children("tbody").children("tr").dblclick(function () {
+        if ($(this).attr("item-type") == "dir") {
+          if (file_explorer_parent.url[file_explorer_parent.url.length - 1] != "/") {
+            file_explorer_parent.url += "/";
+          }
+          file_explorer_parent.url += $(this).attr("item-name");
+          file_explorer_parent.DisplayFolders();
+        }
+      });
+    });
+  }
 }

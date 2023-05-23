@@ -24,8 +24,8 @@ router.get("/root/:id", async (req, res) => {
       });
     }
   } else {
-    res.status(404).send({
-      error: "Not found",
+    res.status(400).send({
+      error: "Connection doesn't exist",
     });
   }
 });
@@ -39,15 +39,21 @@ router.get("/children/:id/:path", async (req, res) => {
   });
   if (connection) {
     if (connection.connection_type == ConnectionType.LOCAL) {
-      res.status(200).send(await local_handler.GetChildren(req.params.path));
+      if (local_handler.Exists(req.params.path)) {
+        res.status(200).send(await local_handler.GetChildren(req.params.path));
+      } else {
+        res.status(404).send({
+          error: "Not found",
+        });
+      }
     } else {
       res.status(400).send({
         error: "Connection type not allowed",
       });
     }
   } else {
-    res.status(404).send({
-      error: "Not found",
+    res.status(400).send({
+      error: "Connection doesn't exist",
     });
   }
 });
