@@ -41,11 +41,11 @@ export async function GetChildren(_path: string) {
       let binary = isBinaryPath(child_element_path);
       if (binary) {
         response_body.children.push(
-          new Child(children[i], "file", "/static/img/files/bin.svg")
+          new Child(children[i], "bin-file", "/static/img/files/bin.svg")
         );
       } else {
         response_body.children.push(
-          new Child(children[i], "file", "/static/img/files/txt.svg")
+          new Child(children[i], "txt-file", "/static/img/files/txt.svg")
         );
       }
     }
