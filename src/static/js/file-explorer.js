@@ -114,14 +114,14 @@ class FileExplorer extends Window {
     } else {
       // sender html tag is a file
       $(sender).append(`
-        <ul id = "file-explorer-context-menu">
+        <ul id = "file-explorer-context-menu" file-path="${this.url + "/" + $(sender).attr("item-name")}">
           <li>
             <img src="/static/img/context-menu/open.svg">
             <span>Open</span>
           </li>
-          <li>
-            <img src="/static/img/context-menu/download.svg">
-            <span>Download</span>
+          <li id="download">
+              <img src="/static/img/context-menu/download.svg">
+              <span>Download</span>
           </li>
           <li>
             <img src="/static/img/context-menu/rename.svg">
@@ -141,11 +141,18 @@ class FileExplorer extends Window {
       $("#file-explorer-context-menu").css({ left: ctx_menu_left });
     }
 
+    $("#file-explorer-context-menu").children("li#download").click(this.ContextMenuDownloadFile)
+
     $(document).click(() => {
       // if there is a context menu just opened close it
       if ($("#file-explorer-context-menu").length) {
         $("#file-explorer-context-menu").remove();
       }
     });
+  }
+
+  ContextMenuDownloadFile = () =>{
+    let filepath = $("#file-explorer-context-menu").attr("file-path");
+    location.href = "/data/download/" + this.connection_uuid + "/" + encodeURIComponent(filepath);
   }
 }

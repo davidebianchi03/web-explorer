@@ -53,3 +53,16 @@ export async function GetChildren(_path: string) {
 
   return response_body;
 }
+
+export function isDirectory(path: string): boolean {
+  return fs.statSync(path).isDirectory();
+}
+
+export async function DownloadFile(_path: string, req: any, res: any) {
+  let file = fs.readFileSync(_path);
+  res.setHeader(
+    "Content-disposition",
+    "attachment; filename=" + path.basename(_path)
+  );
+  res.send(file);
+}
