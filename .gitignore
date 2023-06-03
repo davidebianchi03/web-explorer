@@ -20,3 +20,4 @@ experimental/**/*.db
 .vscode/
 .nuxt
 dev.db
+/coverage/

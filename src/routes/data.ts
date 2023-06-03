@@ -67,7 +67,6 @@ router.get("/download/:id/:path", async (req, res) => {
   });
   if (connection) {
     if (connection.connection_type == ConnectionType.LOCAL) {
-      console.log(req.params.path);
       if (local_handler.Exists(req.params.path)) {
         if (!local_handler.isDirectory(req.params.path)) {
           // download file

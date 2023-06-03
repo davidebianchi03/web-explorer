@@ -7,12 +7,10 @@ import path, { join } from "path";
 import prisma from "./prisma";
 import bcrypt from "bcrypt";
 import { LoginMiddleware } from "./middleware";
-const app = express();
 const cookieParser = require("cookie-parser");
 
-console.log("Your process id is: " + process.pid);
-
-async function main() {
+export async function createServer() {
+  const app = express();
   // create default admin user if no user exists
   if ((await prisma.user.count()) == 0) {
     const username = "admin";
@@ -41,12 +39,5 @@ async function main() {
   app.use("/auth", auth_router);
   app.use("/data-origin", data_origin_router);
   app.use("/data", data_router);
-
-  const port = 3000;
-
-  app.listen(port, () => {
-    console.log(`server listening on http://localhost:${port}`);
-  });
+  return app;
 }
-
-main();
