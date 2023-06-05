@@ -1,23 +1,33 @@
-import logo from './logo.svg';
 import './App.css';
+import 'winbox/dist/css/winbox.min.css'; // required
+import WinBox from 'react-winbox';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <div style={{ margin: 10 }}>
+        <WinBox
+          width={500}
+          height={300}
+          x="center"
+          y={30}
+          title='Pippo'
+          // noClose={this.state.inEditing}
+          bottom={40}
         >
-          Learn React
-        </a>
-      </header>
+          <p>Pippo</p>
+        </WinBox>
+        <WinBox
+          width={500}
+          height={300}
+          x="center"
+          y={30}
+          title='Pippo2'
+        // noClose={this.state.inEditing}
+        >
+          <p>Pippo2</p>
+        </WinBox>
+      </div>
     </div>
   );
 }
