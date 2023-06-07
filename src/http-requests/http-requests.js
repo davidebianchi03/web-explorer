@@ -10,19 +10,17 @@ export function GetServerUrl() {
     }
 }
 
-export function GetConnectionsList() {
-    axios.get(GetServerUrl() + '/data/connections')
-        .then(function (response) {
-            // handle success
-            console.log(response);
-        })
-        .catch(function (error) {
-            return {
-                error: true,
-                errorMessage: error.message
-            }
-        })
-        .finally(function () {
-            // always executed
-        });
+export async function GetConnectionsList() {
+    let response = await axios.get(GetServerUrl() + '/data/connections')
+    if (response.status === 200) {
+        return {
+            error: false,
+            data: response.data
+        }
+    } else {
+        return {
+            error: true,
+            errorMessage: response.message
+        }
+    }
 }

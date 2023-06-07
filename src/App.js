@@ -14,8 +14,23 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    (async() => {
-      let server_connections = GetConnectionsList();
+    (async () => {
+      let response = await GetConnectionsList();
+      console.log(response)
+      if (!response.error) {
+        let connections = [];
+        for (let i = 0; i < response.data.length; i++) {
+          connections.push(
+            <li className='connection'>
+              <img src={folder_icon} alt='Folder' />
+              <span>{response.data[i].name}</span>
+            </li>
+          );
+        }
+        this.setState({connections:connections})
+      } else {
+        // TODO: print error
+      }
     })();
     // let connections = [];
     // for(let i=0;i<20;i++){
