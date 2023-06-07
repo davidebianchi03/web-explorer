@@ -4,12 +4,14 @@ import WinBox from 'react-winbox';
 import React from 'react';
 import folder_icon from "./img/folder.svg";
 import { GetConnectionsList } from './http-requests/http-requests';
+import { FileExplorer } from './file-explorer/FileExplorer';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      connections: []
+      connections: [],
+      windows: [],
     }
   }
 
@@ -20,72 +22,52 @@ export default class App extends React.Component {
       if (!response.error) {
         let connections = [];
         for (let i = 0; i < response.data.length; i++) {
+          let connection = response.data[i];
           connections.push(
-            <li className='connection'>
-              <img src={folder_icon} alt='Folder' />
-              <span>{response.data[i].name}</span>
+            <li className='connection' onDoubleClick={() => this.openConnection(connection)}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <img src={folder_icon} alt='Folder' />
+                <span>{connection.name}</span>
+              </div>
             </li>
           );
         }
-        this.setState({connections:connections})
+        this.setState({ connections: connections })
       } else {
         // TODO: print error
       }
     })();
-    // let connections = [];
-    // for(let i=0;i<20;i++){
-    //   connections.push(
-    //       <li className='connection'>
-    //         <img src={folder_icon} alt='Folder'/>
-    //         <span>Connection Name</span>
-    //       </li>
-    //   )
-    // }
-    // this.setState({connections:connections})
   }
 
   render() {
     return (
       <div className='app'>
+        {this.state.windows}
         <ul className='connections'>
           {this.state.connections}
         </ul>
       </div>
     )
   }
+
+  openConnection(connection) {
+    let connections = this.state.connections;
+    let window_title = `[${connection.name}] - ${connection.path === '' ? '/' : connection.path}`
+    connections.push(
+      <WinBox
+        width={500}
+        height={300}
+        x="center"
+        y={30}
+        title={window_title}
+        bottom={0}
+        className='modern'
+        background="#ff5100"
+        noFull={true}
+      >
+        <FileExplorer connection={connection.connection}/>
+      </WinBox>
+      );
+    this.setState({ connections: connections });
+  }
 }
-
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <div>
-//         {/* <WinBox
-//           width={500}
-//           height={300}
-//           x="center"
-//           y={30}
-//           title='Pippo'
-//           bottom={0}
-//           className='modern'
-//           background= "#ff005d"
-//           noFull={true}
-//         >
-//           <p>Pippo</p>
-//         </WinBox>
-//         <WinBox
-//           width={500}
-//           height={300}
-//           x="center"
-//           y={30}
-//           title='Pippo2'
-//           noFull={true}
-//         >
-//           <p>Pippo2</p>
-//         </WinBox> */}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default App;
