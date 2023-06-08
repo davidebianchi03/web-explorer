@@ -6,11 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./db.sqlite3"
 }
 
-// models
 model User {
   id         Int       @id @default(autoincrement())
   username   String    @unique
@@ -31,13 +30,8 @@ model Session {
   active          Boolean   @default(true)
 }
 
-enum ConnectionType {
-  LOCAL
-}
-
 model Connection {
   id              String         @id @default(uuid())
   name            String
   path            String
-  connection_type ConnectionType @default(LOCAL)
 }

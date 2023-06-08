@@ -1,0 +1,40 @@
+.file-explorer {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.file-explorer .header {
+    width: 100%;
+    height:  30px;
+    background-color: #e6e6e6;
+    display: flex;
+    flex-direction: column;
+}
+
+.file-explorer .header .buttons {
+    height: 100%;
+}
+
+.file-explorer .header .path-input {
+    width: 100%;
+    display: flex;
+    padding: 3px;
+    background-color: #dbdbdb;
+}
+
+.file-explorer .header .path-input input {
+    width: 100%;
+    font-size: 14px;
+    background-color: transparent;
+    border: solid gray 1px;
+    outline: none;
+}
+
+.file-explorer .header .path-input img {
+    background-color: transparent;
+    border: transparent;
+    width: 23px;
+    height: 23px;
+    padding: 0px 5px;
+}
