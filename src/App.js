@@ -18,13 +18,12 @@ export default class App extends React.Component {
   componentDidMount() {
     (async () => {
       let response = await GetConnectionsList();
-      console.log(response)
       if (!response.error) {
         let connections = [];
         for (let i = 0; i < response.data.length; i++) {
           let connection = response.data[i];
           connections.push(
-            <li className='connection' onDoubleClick={() => this.openConnection(connection)}>
+            <li className='connection' onDoubleClick={() => this.openConnection(connection)} key={connection.id}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <img src={folder_icon} alt='Folder' />
                 <span>{connection.name}</span>
@@ -52,7 +51,7 @@ export default class App extends React.Component {
 
   openConnection(connection) {
     let connections = this.state.connections;
-    let window_title = `[${connection.name}] - ${connection.path === '' ? '/' : connection.path}`
+    let window_title = `[${connection.name}] - ${connection.path === '' ? '/' : connection.path}`;
     connections.push(
       <WinBox
         width={500}
@@ -65,9 +64,9 @@ export default class App extends React.Component {
         background="#ff5100"
         noFull={true}
       >
-        <FileExplorer connection={connection.connection}/>
+        <FileExplorer connection={connection} />
       </WinBox>
-      );
+    );
     this.setState({ connections: connections });
   }
 }

@@ -11,16 +11,33 @@ export function GetServerUrl() {
 }
 
 export async function GetConnectionsList() {
-    let response = await axios.get(GetServerUrl() + '/data/connections')
-    if (response.status === 200) {
+    try {
+        let response = await axios.get(GetServerUrl() + '/data/connections');
         return {
             error: false,
             data: response.data
         }
-    } else {
+    } catch (error) {
         return {
             error: true,
-            errorMessage: response.message
+            data: error
+        }
+    }
+}
+
+export async function GetChildrenElements(connection_uuid, path) {
+    connection_uuid = encodeURIComponent(connection_uuid);
+    path = encodeURIComponent(path);
+    try {
+        let response = await axios.get(GetServerUrl() + `/data/children/${connection_uuid}/${path}`);
+        return {
+            error: false,
+            data: response.data
+        }
+    } catch (error) {
+        return {
+            error: true,
+            data: error
         }
     }
 }

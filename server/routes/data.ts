@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, Router } from "express";
+import { Request, Response, Router } from "express";
 import { GetConnection, GetConnections } from "../db/data-queries";
 import { Exists, GetChildren } from "../data-source/local";
 

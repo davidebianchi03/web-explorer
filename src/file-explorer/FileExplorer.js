@@ -2,23 +2,46 @@ import './FileExplorer.css';
 import { Component } from "react";
 import enter_icon from '../img/enter.svg';
 import DataTable from 'react-data-table-component';
+import { GetChildrenElements } from '../http-requests/http-requests';
 
 export class FileExplorer extends Component {
     constructor(props) {
         super(props);
+        this.connection = props.connection;
         this.state = {
             path: "/",
             items: [],
         }
-        this.state.items = [
-            {
-                icon: '',
-                file_name:'Test',
-                type: 'Folder',
-                last_change:'2022/12/03 - 12:18',
-                permissions: 'rwx'
-            }
-        ]
+    }
+
+    componentDidMount() {
+        this.updateChildrenElements();
+    }
+
+    updateChildrenElements(){
+        if (this.connection) {
+            (async () => {
+                let response = await GetChildrenElements(this.connection.id, this.state.path === '' ? '/' : this.state.path);
+                if (!response.error) {
+                    let children = [];
+                    for (let i = 0; i < response.data.children.length; i++) {
+                        let child = response.data.children[i];
+                        children.push({
+                            icon: '',
+                            name: child.name,
+                            type: child.type,
+                            last_modified: child.last_modified,
+                            size: child.size
+                        });
+                    }
+                    this.setState({ items: children });
+                } else {
+                    alert('Error')
+                }
+            })();
+        } else {
+            alert('Error')
+        }
     }
 
     render() {
@@ -32,9 +55,12 @@ export class FileExplorer extends Component {
                 }
             },
             {
-                name: 'File name',
-                selector: row => row.file_name,
+                name: 'Name',
+                selector: row => row.name,
                 sortable: true,
+                style: {
+                    fontWeight: 500,
+                }
             },
             {
                 name: 'Type',
@@ -42,33 +68,33 @@ export class FileExplorer extends Component {
                 sortable: true,
             },
             {
-                name: 'Last change',
-                selector: row => row.last_change,
+                name: 'Last Modified',
+                selector: row => row.last_modified,
                 sortable: true,
             },
             {
-                name: 'Permissions',
-                selector: row => row.permissions,
+                name: 'Size',
+                selector: row => row.size,
             },
         ]
 
         const CustomStyle = {
             rows: {
-              style: {
-                minHeight: '28px !important',
-                fontSize: '12px',
-                whiteSpace: 'pre',
-              },
+                style: {
+                    minHeight: '28px !important',
+                    fontSize: '12px',
+                    whiteSpace: 'pre',
+                },
             },
             headRow: {
-              style: {
-                minHeight: '30px',
-                borderTopWidth: '1px',
-                borderTopStyle: 'solid',
-                borderBottomWidth: '2px',
-              },
+                style: {
+                    minHeight: '30px',
+                    borderTopWidth: '1px',
+                    borderTopStyle: 'solid',
+                    borderBottomWidth: '2px',
+                },
             },
-          };
+        };
         return (
             <div className="file-explorer">
                 <div className='header'>
@@ -83,9 +109,16 @@ export class FileExplorer extends Component {
                         columns={columns}
                         data={this.state.items}
                         customStyles={CustomStyle}
+                        onRowDoubleClicked={(row) => this.openChild(row)}
                     />
                 </div>
             </div>
         )
+    }
+
+    openChild(row) {
+        let new_path = this.state.path[this.state.path.length - 1] === '/' ? '' : '/' + row.name;
+        this.setState({ path: new_path });
+        this.updateChildrenElements();
     }
 }

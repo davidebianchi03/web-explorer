@@ -20,11 +20,21 @@ export async function GetChildren(_path: string) {
     name: string = "";
     type: string = "";
     icon: string = "";
+    size: string = "";
+    last_modified = "";
 
-    constructor(name: string, type: string, icon: string) {
+    constructor(
+      name: string,
+      type: string,
+      icon: string,
+      size: string,
+      last_modified: string
+    ) {
       this.name = name;
       this.type = type;
       this.icon = icon;
+      this.size = size;
+      this.last_modified = last_modified;
     }
   }
 
@@ -32,19 +42,34 @@ export async function GetChildren(_path: string) {
 
   for (let i = 0; i < children.length; i++) {
     let child_element_path = path.join(_path, children[i]);
+    let file_stats = fs.statSync(child_element_path);
+    let last_modified_date = file_stats.mtime.toLocaleDateString() + ' ' + file_stats.mtime.toLocaleTimeString();
     if (fs.statSync(child_element_path).isDirectory()) {
       response_body.children.push(
-        new Child(children[i], "dir", "/static/img/folder.svg")
+        new Child(children[i], "dir", "/static/img/folder.svg", '', last_modified_date)
       );
     } else {
       let binary = isBinaryPath(child_element_path);
+      console.log(file_stats.size);
       if (binary) {
         response_body.children.push(
-          new Child(children[i], "bin-file", "/static/img/files/bin.svg")
+          new Child(
+            children[i],
+            "bin-file",
+            "/static/img/files/bin.svg",
+            "",
+            last_modified_date
+          )
         );
       } else {
         response_body.children.push(
-          new Child(children[i], "txt-file", "/static/img/files/txt.svg")
+          new Child(
+            children[i],
+            "txt-file",
+            "/static/img/files/txt.svg",
+            file_stats.size.toString(),
+            last_modified_date
+          )
         );
       }
     }
