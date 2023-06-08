@@ -26,7 +26,10 @@ export class FileExplorer extends Component {
             {
                 name: '',
                 selector: row => row.icon,
-                width: "25px"  
+                width: "25px",
+                style: {
+                    height: 25
+                }
             },
             {
                 name: 'File name',
@@ -48,6 +51,24 @@ export class FileExplorer extends Component {
                 selector: row => row.permissions,
             },
         ]
+
+        const CustomStyle = {
+            rows: {
+              style: {
+                minHeight: '28px !important',
+                fontSize: '12px',
+                whiteSpace: 'pre',
+              },
+            },
+            headRow: {
+              style: {
+                minHeight: '30px',
+                borderTopWidth: '1px',
+                borderTopStyle: 'solid',
+                borderBottomWidth: '2px',
+              },
+            },
+          };
         return (
             <div className="file-explorer">
                 <div className='header'>
@@ -61,6 +82,7 @@ export class FileExplorer extends Component {
                     <DataTable
                         columns={columns}
                         data={this.state.items}
+                        customStyles={CustomStyle}
                     />
                 </div>
             </div>
