@@ -29,12 +29,13 @@
   },
   "scripts": {
     "start:react": "react-scripts start",
-    "build:react": "react-scripts build",
+    "build:react": "BUILD_PATH='./dist/react' react-scripts build",
     "test:react": "react-scripts test",
     "eject:react": "react-scripts eject",
     "start:express": "nodemon",
     "build:express": "tsc",
-    "start": "concurrently --kill-others \"npm run start:express\" \"npm run start:react\""
+    "start": "concurrently --kill-others \"npm run start:express\" \"npm run start:react\"",
+    "build": "npm run build:react && npx tsc"
   },
   "eslintConfig": {
     "extends": [
