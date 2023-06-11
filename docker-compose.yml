@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  webexplorer:
+    image: 'webexplorer'
+    ports:
+      - 5080:5000
