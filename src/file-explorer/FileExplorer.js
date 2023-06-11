@@ -1,6 +1,7 @@
 import "./FileExplorer.css";
 import { Component } from "react";
 import enter_icon from "../img/enter.svg";
+import return_icon from "../img/return.svg";
 import DataTable from "react-data-table-component";
 import { GetChildrenElements } from "../http-requests/http-requests";
 import Swal from "sweetalert2";
@@ -30,7 +31,7 @@ export class FileExplorer extends Component {
           for (let i = 0; i < response.data.children.length; i++) {
             let child = response.data.children[i];
             children.push({
-              icon: "",
+              icon: child.icon,
               name: child.name,
               type: child.type,
               last_modified: child.last_modified,
@@ -84,6 +85,9 @@ export class FileExplorer extends Component {
         style: {
           height: 25,
         },
+        cell: row => (
+          <img src={row.icon} alt="File icon" className="file-icon"/>
+        )
       },
       {
         name: "Name",
@@ -133,10 +137,14 @@ export class FileExplorer extends Component {
     return (
       <div className="file-explorer">
         <div className="header">
-          <div className="buttons"></div>
-          <div className="path-input">
-            <input type="text" value={this.state.value} />
-            <img src={enter_icon} alt="Enter" />
+          <div className="buttons">
+            <button>
+              <img
+                src={return_icon}
+                alt="Return"
+                onClick={() => this.returnToParent()}
+              />
+            </button>
           </div>
         </div>
         <div>
@@ -145,6 +153,7 @@ export class FileExplorer extends Component {
             data={this.state.items}
             customStyles={CustomStyle}
             onRowDoubleClicked={(row) => this.openChild(row)}
+            className="files-table"
           />
         </div>
       </div>
@@ -160,7 +169,19 @@ export class FileExplorer extends Component {
         row.name;
       this.updateChildrenElements();
     } else {
-        // it's a file
+      // it's a file
+    }
+  }
+
+  returnToParent() {
+    if (this.path !== "/" || this.path !== "") {
+      this.path =
+        this.path[this.path.length - 1] === "/"
+          ? this.path.substring(0, this.path.length - 1)
+          : this.path;
+      let position = this.path.lastIndexOf("/");
+      this.path = this.path.substring(0, position - 1);
+      this.updateChildrenElements();
     }
   }
 }

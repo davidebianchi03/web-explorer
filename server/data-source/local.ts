@@ -23,7 +23,7 @@ export async function GetChildren(_path: string) {
     icon: string = "";
     size: string = "";
     last_modified = "";
-    permissions:Permissions;
+    permissions: Permissions;
 
     constructor(
       name: string,
@@ -57,7 +57,9 @@ export async function GetChildren(_path: string) {
         new Child(
           children[i],
           "dir",
-          "/static/img/folder.svg",
+          (process.env.REACT_APP_ENVIRONMENT === "develop"
+            ? `http://${process.env.REACT_APP_SERVER_HOSTNAME}:${process.env.REACT_APP_SERVER_PORT}`
+            : "") + "/file-icons/folder.svg",
           "",
           last_modified_date,
           permission
@@ -70,7 +72,9 @@ export async function GetChildren(_path: string) {
           new Child(
             children[i],
             "bin-file",
-            "/static/img/files/bin.svg",
+            (process.env.REACT_APP_ENVIRONMENT === "develop"
+              ? `http://${process.env.REACT_APP_SERVER_HOSTNAME}:${process.env.REACT_APP_SERVER_PORT}`
+              : "") + "/file-icons/bin.svg",
             humanFileSize(file_stats.size).toString(),
             last_modified_date,
             permission
@@ -81,7 +85,9 @@ export async function GetChildren(_path: string) {
           new Child(
             children[i],
             "txt-file",
-            "/static/img/files/txt.svg",
+            (process.env.REACT_APP_ENVIRONMENT === "develop"
+              ? `http://${process.env.REACT_APP_SERVER_HOSTNAME}:${process.env.REACT_APP_SERVER_PORT}`
+              : "") + "/file-icons/txt.svg",
             humanFileSize(file_stats.size).toString(),
             last_modified_date,
             permission
@@ -117,7 +123,7 @@ export function getPermissions(path: string): Permissions {
     fs.accessSync(path, fs.constants.W_OK);
     write = true;
   } catch (exception) {}
-  
+
   try {
     fs.accessSync(path, fs.constants.X_OK);
     execute = true;

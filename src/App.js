@@ -5,6 +5,7 @@ import React from 'react';
 import folder_icon from "./img/folder.svg";
 import { GetConnectionsList } from './http-requests/http-requests';
 import { FileExplorer } from './file-explorer/FileExplorer';
+import { Helmet } from 'react-helmet';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -16,6 +17,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
+    // load the list of connections
     (async () => {
       let response = await GetConnectionsList();
       if (!response.error) {
@@ -41,6 +43,9 @@ export default class App extends React.Component {
   render() {
     return (
       <div className='app'>
+        <Helmet>
+          <title>Web Explorer</title>
+        </Helmet>
         {this.state.windows}
         <ul className='connections'>
           {this.state.connections}

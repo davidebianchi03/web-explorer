@@ -19,6 +19,8 @@ export function createApp(production: boolean): Express {
     });
   }
 
+  app.use("/file-icons", express.static(path.join(__dirname, "/file-icons")));
+
   // cors
   app.use(
     cors({
