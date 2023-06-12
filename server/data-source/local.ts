@@ -67,6 +67,7 @@ export async function GetChildren(_path: string) {
       );
     } else {
       let binary = isBinaryPath(child_element_path);
+      console.log(binary)
       if (binary) {
         response_body.children.push(
           new Child(

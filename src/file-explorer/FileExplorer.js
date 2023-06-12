@@ -5,6 +5,7 @@ import return_icon from "../img/return.svg";
 import DataTable from "react-data-table-component";
 import { GetChildrenElements } from "../http-requests/http-requests";
 import Swal from "sweetalert2";
+import { ContextMenu } from "../context-menu/context-menu";
 
 export class FileExplorer extends Component {
   constructor(props) {
@@ -12,8 +13,10 @@ export class FileExplorer extends Component {
     this.connection = props.connection;
     this.state = {
       items: [],
+      context_menu: null,
     };
     this.path = "/";
+    this.selected_row = null;
   }
 
   componentDidMount() {
@@ -85,9 +88,9 @@ export class FileExplorer extends Component {
         style: {
           height: 25,
         },
-        cell: row => (
-          <img src={row.icon} alt="File icon" className="file-icon"/>
-        )
+        cell: (row) => (
+          <img src={row.icon} alt="File icon" className="file-icon" />
+        ),
       },
       {
         name: "Name",
@@ -147,17 +150,29 @@ export class FileExplorer extends Component {
             </button>
           </div>
         </div>
-        <div>
+        <div onContextMenu={(event) => this.contextMenu(event)}>
+          {this.state.context_menu}
           <DataTable
             columns={columns}
             data={this.state.items}
             customStyles={CustomStyle}
             onRowDoubleClicked={(row) => this.openChild(row)}
-            className="files-table"
+            onRowMouseEnter={(row) => this.rowMouseEnter(row)}
+            onRowMouseLeave={(row) => this.rowMouseLeave(row)}
           />
         </div>
       </div>
     );
+  }
+
+  rowMouseEnter(row) {
+    this.selected_row =
+      (this.path[this.path.length - 1] === "/" ? this.path : this.path + "/") +
+      row.name;
+  }
+
+  rowMouseLeave(row) {
+    this.selected_row = null;
   }
 
   openChild(row) {
@@ -182,6 +197,20 @@ export class FileExplorer extends Component {
       let position = this.path.lastIndexOf("/");
       this.path = this.path.substring(0, position - 1);
       this.updateChildrenElements();
+    }
+  }
+
+  contextMenu(event) {
+    event.preventDefault();
+    if (this.selected_row) {
+      let context_menu = (
+        <ContextMenu
+          filepath={this.selected_row}
+          x={event.clientX}
+          y={event.clientY}
+        />
+      );
+      this.setState({ context_menu: context_menu });
     }
   }
 }

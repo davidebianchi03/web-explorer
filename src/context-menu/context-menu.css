@@ -1,0 +1,26 @@
+.context-menu{
+    position: absolute;
+    z-index: 1000;
+    top: 50px;
+    left: 50px;
+    list-style: none;
+    padding-left: 0;
+    padding: 10px;
+    width: 150px;
+    background-color: white;
+    border-radius: 7px;
+    -webkit-box-shadow: 5px 5px 15px 8px #c4c4c4f2;
+    box-shadow: 5px 5px 15px 8px #c4c4c4f2;
+}
+
+.context-menu li{
+    padding: 2px;
+    border: solid transparent 1px;
+    user-select: none;
+}
+
+.context-menu li:hover{
+    background-color: #bdf0f7d5;
+    border: solid #00d9ff 1px;
+    border-radius: 2px;
+}
