@@ -37,7 +37,9 @@
     "start:express": "nodemon",
     "build:express": "tsc",
     "start": "concurrently --kill-others \"npm run start:express\" \"npm run start:react\"",
-    "build": "npm run build:react && npx tsc"
+    "build": "npm run build:react && npx tsc",
+    "prisma:push": "npx prisma db push",
+    "prisma:studio": "npx prisma studio"
   },
   "eslintConfig": {
     "extends": [

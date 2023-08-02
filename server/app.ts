@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import { router as data_router } from "./routes/data";
 import cors from "cors";
 import path from "path";
+import { LoadConnectionsFromEnvironment } from "./utils";
 
 export function createApp(production: boolean): Express {
   const app: Express = express();
@@ -31,5 +32,7 @@ export function createApp(production: boolean): Express {
   // routes
   app.use("/data", data_router);
 
+  LoadConnectionsFromEnvironment();
+ 
   return app;
 }

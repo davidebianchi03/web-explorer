@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { GetConnection, GetConnections } from "../db/data-queries";
+import { GetConnectionByUuid, GetConnections } from "../db/data-queries";
 import {
   Exists,
   GetChildren,
@@ -13,7 +13,7 @@ router.get("/connections/:id?", async (req: Request, res: Response) => {
   if (req.params.id === undefined) {
     res.status(200).json(await GetConnections());
   } else {
-    let connection = await GetConnection(req.params.connection_id);
+    let connection = await GetConnectionByUuid(req.params.connection_id);
     if (connection) {
       return res.status(200).json(connection);
     } else {
@@ -25,7 +25,7 @@ router.get("/connections/:id?", async (req: Request, res: Response) => {
 router.get(
   "/children/:connection_id/:path",
   async (req: Request, res: Response) => {
-    let connection = await GetConnection(req.params.connection_id);
+    let connection = await GetConnectionByUuid(req.params.connection_id);
     if (connection) {
       if (Exists(req.params.path) && isDirectory(req.params.path)) {
         // check if user has permissions to read the selected folder
