@@ -1,16 +1,9 @@
 name: ci
 
 on:
-  schedule:
-    - cron: "0 10 * * *"
   push:
-    branches:
-      - "**"
     tags:
-      - "v*.*.*"
-  pull_request:
-    branches:
-      - "main"
+      - "*.*.*"
 
 jobs:
   docker:
@@ -27,7 +20,7 @@ jobs:
           # list of Docker images to use as base name for tags
           images: |
             dadebia/web-explorer
-            ghcr.io/dadebia/web-explorer
+            ghcr.io/davidebianchi03/web-explorer
           # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule
