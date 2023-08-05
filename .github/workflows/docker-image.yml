@@ -30,4 +30,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/web-explorer:${{ steps.vars.outputs.tag }} , ${{ secrets.DOCKER_HUB_USERNAME }}/web-explorer:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/web-explorer:${{ env.RELEASE_VERSION }} , ${{ secrets.DOCKERHUB_TOKEN }}/web-explorer:latest
