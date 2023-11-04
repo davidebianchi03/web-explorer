@@ -19,6 +19,9 @@ export class FileExplorer extends Component {
     this.selected_row = null;
     this.context_menu_ref = React.createRef();
     this.current_element_ref = React.createRef();
+    if(props.connection.path){
+      this.path = props.connection.path;
+    }
   }
 
   componentDidMount() {
@@ -30,6 +33,7 @@ export class FileExplorer extends Component {
       (async () => {
         this.path = this.path === "" ? "/" : this.path;
         this.path = this.path[0] === "/" ? this.path : "/" + this.path;
+        console.log(this.path)
         let response = await GetChildrenElements(this.connection.id, this.path);
         if (!response.error) {
           let children = [];
@@ -197,7 +201,8 @@ export class FileExplorer extends Component {
           ? this.path.substring(0, this.path.length - 1)
           : this.path;
       let position = this.path.lastIndexOf("/");
-      this.path = this.path.substring(0, position - 1);
+      this.path = this.path.substring(0, position);
+      console.log(this.path);
       this.updateChildrenElements();
     }
   }
