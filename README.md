@@ -6,3 +6,7 @@
 <hr>
 
 Web Explorer is a web file explorer that allows you to access to **files that are on your computer** with a web interface
+
+<div align="center">
+    <img src="docs/demo.gif">
+</div>
