@@ -51,3 +51,29 @@ export async function GetChildrenElements(connection_uuid, path) {
     };
   }
 }
+
+export async function DownloadFile(path, filename) {
+  path = encodeURIComponent(path);
+
+  try {
+    let response = await axios({
+      url: `${GetServerUrl()}/data/download/${path}`,
+      method: 'GET',
+      responseType: 'blob',
+    });
+    console.log(response)
+
+    const href = URL.createObjectURL(response.data);
+
+    const link = document.createElement('a');
+    link.href = href;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  } catch (error) {
+    console.log(error);
+  }
+}

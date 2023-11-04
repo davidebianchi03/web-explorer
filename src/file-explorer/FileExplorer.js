@@ -1,3 +1,4 @@
+import React from "react";
 import "./FileExplorer.css";
 import { Component } from "react";
 import enter_icon from "../img/enter.svg";
@@ -13,10 +14,11 @@ export class FileExplorer extends Component {
     this.connection = props.connection;
     this.state = {
       items: [],
-      context_menu: null,
     };
     this.path = "/";
     this.selected_row = null;
+    this.context_menu_ref = React.createRef();
+    this.current_element_ref = React.createRef();
   }
 
   componentDidMount() {
@@ -138,7 +140,8 @@ export class FileExplorer extends Component {
       },
     };
     return (
-      <div className="file-explorer">
+      <div className="file-explorer" ref={this.current_element_ref}>
+        <ContextMenu ref={this.context_menu_ref} />
         <div className="header">
           <div className="buttons">
             <button>
@@ -150,8 +153,7 @@ export class FileExplorer extends Component {
             </button>
           </div>
         </div>
-        <div onContextMenu={(event) => this.contextMenu(event)}>
-          {this.state.context_menu}
+        <div onContextMenu={(event) => this.showContextMenu(event)}>
           <DataTable
             columns={columns}
             data={this.state.items}
@@ -200,17 +202,25 @@ export class FileExplorer extends Component {
     }
   }
 
-  contextMenu(event) {
+  showContextMenu(event) {
     event.preventDefault();
     if (this.selected_row) {
-      let context_menu = (
-        <ContextMenu
-          filepath={this.selected_row}
-          x={event.clientX}
-          y={event.clientY}
-        />
-      );
-      this.setState({ context_menu: context_menu });
+      let element_bounding_client_rect = this.current_element_ref.current.getBoundingClientRect();
+
+      let left = event.pageX - element_bounding_client_rect.left;
+      let top = event.pageY - element_bounding_client_rect.top;
+
+      if (left < 25) {
+        left = 25;
+      }
+      if (top < 25) {
+        top = 25;
+      }
+
+      if (left > element_bounding_client_rect.width - 175) {
+        left = element_bounding_client_rect.width - 175;
+      }
+      this.context_menu_ref.current.displayContextMenu(left, top, this.selected_row);
     }
   }
 }

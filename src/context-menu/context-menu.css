@@ -1,8 +1,8 @@
 .context-menu{
     position: absolute;
     z-index: 1000;
-    top: 50px;
-    left: 50px;
+    top: 0px;
+    left: 0px;
     list-style: none;
     padding-left: 0;
     padding: 10px;

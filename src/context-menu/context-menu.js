@@ -1,31 +1,54 @@
 import React, { Component } from "react";
 import "./context-menu.css";
+import { DownloadFile } from "../http-requests/http-requests";
 
 export class ContextMenu extends Component {
   constructor(props) {
     super(props);
-    this.filepath = props.filepath;
-    this.pos_x = props.x;
-    this.pos_y = props.y;
-    this.close = props.close;
-    this.context_menu = React.createRef();
+    this.state = {
+      display: false,
+      pos_x: 0,
+      pos_y: 0,
+      filepath: null,
+    };
+    this.context_menu_ref = React.createRef();
   }
 
-  documentClickEvent(event) {
-    if(event.clientX < this.pos_x || event.clientX > this.pos_x + 150){
-        console.log(event)
-    }
+  componentDidMount = () => {
+    document.addEventListener('click', (event) => {
+      if (this.state.display) {
+        this.setState({ display: false });
+      }
+    })
+  }
+
+  displayContextMenu = (posx, posy, filepath) => {
+    this.setState({
+      display: true,
+      pos_x: posx,
+      pos_y: posy,
+      filepath:filepath
+    });
+
   }
 
   render() {
-    console.log(this.context_menu)
-    document.onclick = (event) => this.documentClickEvent(event);
-    return (
-      <ul className="context-menu" ref={this.context_menu}>
-        <li>Open</li>
-        <li>Download</li>
-        <li>Properties</li>
-      </ul>
-    );
+    if (this.state.display) {
+      return (
+        <ul className="context-menu" ref={this.context_menu_ref} style={{ top: this.state.pos_y - 20, left: this.state.pos_x - 20 }}>
+          <li>Open</li>
+          <li onClick={this.handleDownload}>Download</li>
+          <li>Properties</li>
+        </ul>
+      );
+    } else {
+      return (<div></div>);
+    }
+  }
+
+  handleDownload = () => {
+    let path = this.state.filepath.split("/");
+    let filename = path[path.length - 1];
+    DownloadFile(this.state.filepath, filename);
   }
 }

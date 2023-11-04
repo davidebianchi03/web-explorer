@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as path from "path";
 import { Request, Response, Router } from "express";
 import { GetConnectionByUuid, GetConnections } from "../db/data-queries";
 import {
@@ -43,3 +45,23 @@ router.get(
     }
   }
 );
+
+router.get("/download/:path", async (req: Request, res: Response) => {
+  
+  if (!fs.existsSync(req.params.path)) {
+    res.status(404).json({description: "File not found"});
+    return;
+  }
+  
+  if(isDirectory(req.params.path)){
+    res.status(400).json({description: "Selected file is not a file"});
+    return;
+  }
+
+  let file = fs.readFileSync(req.params.path);
+    res.setHeader(
+      "Content-disposition",
+      "attachment; filename=" + path.basename(req.params.path)
+    );
+    res.send(file);
+});
