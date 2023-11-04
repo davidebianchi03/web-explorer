@@ -1,7 +1,16 @@
 import * as fs from "fs";
-import isBinaryPath from "is-binary-path";
 import * as path from "path";
 import { humanFileSize } from "../utils";
+import { isText } from "istextorbinary";
+
+function IsTextOrBinary(filepath: string): boolean {
+  let is_text = isText(filepath);
+  if (!is_text) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 export function GetRoot(): string {
   let root = path.resolve(__dirname).split(path.sep)[0];
@@ -66,8 +75,7 @@ export async function GetChildren(_path: string) {
         )
       );
     } else {
-      let binary = isBinaryPath(child_element_path);
-      console.log(binary)
+      let binary = IsTextOrBinary(child_element_path);
       if (binary) {
         response_body.children.push(
           new Child(
