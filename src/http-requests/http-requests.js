@@ -52,7 +52,7 @@ export async function GetChildrenElements(connection_uuid, path) {
   }
 }
 
-export async function DownloadFile(path, filename) {
+export async function DownloadPath(path, filename) {
   path = encodeURIComponent(path);
 
   try {
@@ -61,7 +61,6 @@ export async function DownloadFile(path, filename) {
       method: 'GET',
       responseType: 'blob',
     });
-    console.log(response)
 
     const href = URL.createObjectURL(response.data);
 
@@ -73,7 +72,16 @@ export async function DownloadFile(path, filename) {
 
     document.body.removeChild(link);
     URL.revokeObjectURL(href);
+    return {
+      error: false,
+      data: null,
+      statusCode: response.status,
+    };
   } catch (error) {
-    console.log(error);
+    return {
+      error: true,
+      data: error,
+      statusCode: error.response.status,
+    };
   }
 }

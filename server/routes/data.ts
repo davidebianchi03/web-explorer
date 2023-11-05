@@ -1,4 +1,6 @@
 import * as fs from "fs";
+import * as tar from "tar";
+import * as zlib from "zlib";
 import * as path from "path";
 import { Request, Response, Router } from "express";
 import { GetConnectionByUuid, GetConnections } from "../db/data-queries";
@@ -47,21 +49,40 @@ router.get(
 );
 
 router.get("/download/:path", async (req: Request, res: Response) => {
-  
   if (!fs.existsSync(req.params.path)) {
-    res.status(404).json({description: "File not found"});
-    return;
-  }
-  
-  if(isDirectory(req.params.path)){
-    res.status(400).json({description: "Selected file is not a file"});
+    res.status(404).json({ description: "File not found" });
     return;
   }
 
-  let file = fs.readFileSync(req.params.path);
+  let output_filename = path.basename(req.params.path);
+  if (isDirectory(req.params.path)) {
+    output_filename = output_filename + ".tar.gz";
+    let archive_path = path.join(__dirname, output_filename);
+
+    if (fs.existsSync(archive_path)) {
+      fs.unlinkSync(archive_path);
+    }
+
+    try {
+      fs.createWriteStream(archive_path);
+      await tar.create({ file: archive_path }, [req.params.path]);
+      res.set("Content-Type", "application/gzip");
+      res.set("Content-Disposition", `attachment; filename=${output_filename}`);
+      fs.createReadStream(archive_path).pipe(res);
+      res.status(200);
+      return;
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ description: "Cannot create tar.gz archive" });
+      return;
+    }
+  } else {
+    let file = fs.readFileSync(req.params.path);
     res.setHeader(
       "Content-disposition",
-      "attachment; filename=" + path.basename(req.params.path)
+      "attachment; filename=" + output_filename
     );
-    res.send(file);
+    res.status(200).send(file);
+    return;
+  }
 });
