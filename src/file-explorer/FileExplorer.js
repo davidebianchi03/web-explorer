@@ -20,7 +20,7 @@ export class FileExplorer extends Component {
     this.selected_row_type = null;
     this.context_menu_ref = React.createRef();
     this.current_element_ref = React.createRef();
-    if(props.connection.path){
+    if (props.connection.path) {
       this.path = props.connection.path;
     }
   }
@@ -86,63 +86,41 @@ export class FileExplorer extends Component {
   }
 
   render() {
-    let columns = [
-      {
-        name: "",
-        selector: (row) => row.icon,
-        width: "25px",
-        style: {
-          height: 25,
-        },
-        cell: (row) => (
-          <img src={row.icon} alt="File icon" className="file-icon" />
-        ),
-      },
-      {
-        name: "Name",
-        selector: (row) => row.name,
-        sortable: true,
-        style: {
-          fontWeight: 500,
-        },
-      },
-      {
-        name: "Type",
-        selector: (row) => row.type,
-        sortable: true,
-      },
-      {
-        name: "Last Modified",
-        selector: (row) => row.last_modified,
-        sortable: true,
-      },
-      {
-        name: "Size",
-        selector: (row) => row.size,
-      },
-      {
-        name: "Permissions",
-        selector: (row) => row.permissions,
-      },
-    ];
 
-    const CustomStyle = {
-      rows: {
-        style: {
-          minHeight: "28px !important",
-          fontSize: "12px",
-          whiteSpace: "pre",
-        },
-      },
-      headRow: {
-        style: {
-          minHeight: "30px",
-          borderTopWidth: "1px",
-          borderTopStyle: "solid",
-          borderBottomWidth: "2px",
-        },
-      },
-    };
+    // <DataTable
+    //         columns={columns}
+    //         data={this.state.items}
+    //         customStyles={CustomStyle}
+    //         onRowDoubleClicked={(row) => this.openChild(row)}
+    //         onRowMouseEnter={(row) => this.rowMouseEnter(row)}
+    //         onRowMouseLeave={(row) => this.rowMouseLeave(row)}
+    //       />
+
+    let rows = [];
+    for (let i = 0; i < this.state.items.length; i++) {
+      let row = this.state.items[i];
+
+      rows.push(
+        <div
+          key={"row" + i}
+          className="row"
+          onMouseEnter={() => { this.rowMouseEnter(row) }}
+          onMouseLeave={() => { this.rowMouseLeave(row) }}
+          onClick={(event) => this.rowClick(event, row)}
+        >
+          <span className="cell file-icon">
+            <img src={row.icon} alt="File icon" className="file-icon" />
+          </span>
+          <span className="cell file-name">{row.name}</span>
+          <span className="cell file-type">{row.type}</span>
+          <span className="cell file-last-modified">{row.last_modified}</span>
+          <span className="cell file-size">{row.size}</span>
+          <span className="cell file-permissions">{row.permissions}</span>
+        </div>
+      )
+    }
+
+
     return (
       <div className="file-explorer" ref={this.current_element_ref}>
         <ContextMenu ref={this.context_menu_ref} />
@@ -158,14 +136,19 @@ export class FileExplorer extends Component {
           </div>
         </div>
         <div onContextMenu={(event) => this.showContextMenu(event)}>
-          <DataTable
-            columns={columns}
-            data={this.state.items}
-            customStyles={CustomStyle}
-            onRowDoubleClicked={(row) => this.openChild(row)}
-            onRowMouseEnter={(row) => this.rowMouseEnter(row)}
-            onRowMouseLeave={(row) => this.rowMouseLeave(row)}
-          />
+          <div>
+            <div className="row header">
+              <span className="cell file-icon"></span>
+              <span className="cell file-name">Name</span>
+              <span className="cell file-type">Type</span>
+              <span className="cell file-last-modified">Last Modified</span>
+              <span className="cell file-size">Size</span>
+              <span className="cell file-permissions">Permissions</span>
+            </div>
+            <div className="rows">
+              {rows}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -181,6 +164,13 @@ export class FileExplorer extends Component {
   rowMouseLeave(row) {
     this.selected_row = null;
     this.selected_row_type = null;
+  }
+
+  rowClick(event, row) {
+    let click_count = event.detail;
+    if (click_count == 2) {
+      this.openChild(row)
+    }
   }
 
   openChild(row) {

@@ -4,6 +4,7 @@ import { DownloadPath } from "../http-requests/http-requests";
 import open_icon from "../img/open.png";
 import download_icon from "../img/download.png";
 import menu_icon from "../img/menu.png";
+import upload_icon from "../img/upload.png";
 import Swal from "sweetalert2";
 
 export class ContextMenu extends Component {
@@ -51,6 +52,10 @@ export class ContextMenu extends Component {
             <span>Download</span>
           </li>
           <li>
+            <img src={upload_icon} alt="" />
+            <span>Upload</span>
+          </li>
+          <li>
             <img src={menu_icon} alt="" />
             <span>Properties</span>
           </li>
@@ -61,7 +66,7 @@ export class ContextMenu extends Component {
     }
   }
 
-  handleDownload = async() => {
+  handleDownload = async () => {
     let path = this.state.filepath.split("/");
 
     let filename = path[path.length - 1];

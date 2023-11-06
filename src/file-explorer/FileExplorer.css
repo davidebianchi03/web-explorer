@@ -35,7 +35,81 @@
   user-select: none;
 }
 
-.file-explorer .file-icon{
-    width: 20px;
-    height: 20px;
+.file-explorer .file-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.file-explorer table {
+  border-collapse: collapse;
+}
+
+.file-explorer .rows{
+  overflow-y: auto;
+}
+
+.row {
+  width: 100%;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  align-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  border-top: 1px solid #e4e4e4;
+  user-select: none;
+}
+
+.row.header{
+  font-size: 12px;
+  font-weight: 700;
+  background-color: #f3f3f3;
+  width: 100%;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  align-content: space-between;
+  font-size: 12px;
+  user-select: none;
+}
+
+.file-explorer .rows .row:hover{
+  background-color: #fafafa;
+}
+
+.row .cell {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0px 5px;
+}
+
+.row .cell.file-icon {
+  width: 20px;
+}
+
+.row .cell.file-name {
+  width: 100%;
+}
+
+.row .cell.file-type {
+  width: 10%;
+  min-width: 50px;
+}
+
+.row .cell.file-last-modified {
+  width: 15%;
+  min-width: 150px;
+}
+
+.row .cell.file-size {
+  width: 120px;
+}
+
+.row .cell.file-permissions {
+  width: 120px;
 }
