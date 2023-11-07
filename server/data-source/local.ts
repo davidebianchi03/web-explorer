@@ -31,6 +31,7 @@ export async function GetChildren(_path: string) {
     type: string = "";
     icon: string = "";
     size: string = "";
+    real_size: number = 0;
     last_modified = "";
     permissions: Permissions;
 
@@ -39,6 +40,7 @@ export async function GetChildren(_path: string) {
       type: string,
       icon: string,
       size: string,
+      real_size: number,
       last_modified: string,
       permissions: Permissions
     ) {
@@ -46,6 +48,7 @@ export async function GetChildren(_path: string) {
       this.type = type;
       this.icon = icon;
       this.size = size;
+      this.real_size = real_size;
       this.last_modified = last_modified;
       this.permissions = permissions;
     }
@@ -56,10 +59,7 @@ export async function GetChildren(_path: string) {
   for (let i = 0; i < children.length; i++) {
     let child_element_path = path.join(_path, children[i]);
     let file_stats = fs.statSync(child_element_path);
-    let last_modified_date =
-      file_stats.mtime.toLocaleDateString() +
-      " " +
-      file_stats.mtime.toLocaleTimeString();
+    let last_modified_date =file_stats.mtime.toISOString();
     let permission = getPermissions(child_element_path);
     if (fs.statSync(child_element_path).isDirectory()) {
       response_body.children.push(
@@ -70,6 +70,7 @@ export async function GetChildren(_path: string) {
             ? `http://${process.env.REACT_APP_SERVER_HOSTNAME}:${process.env.REACT_APP_SERVER_PORT}`
             : "") + "/file-icons/folder.svg",
           "",
+          0,
           last_modified_date,
           permission
         )
@@ -85,6 +86,7 @@ export async function GetChildren(_path: string) {
               ? `http://${process.env.REACT_APP_SERVER_HOSTNAME}:${process.env.REACT_APP_SERVER_PORT}`
               : "") + "/file-icons/bin.svg",
             humanFileSize(file_stats.size).toString(),
+            file_stats.size,
             last_modified_date,
             permission
           )
@@ -98,6 +100,7 @@ export async function GetChildren(_path: string) {
               ? `http://${process.env.REACT_APP_SERVER_HOSTNAME}:${process.env.REACT_APP_SERVER_PORT}`
               : "") + "/file-icons/txt.svg",
             humanFileSize(file_stats.size).toString(),
+            file_stats.size,
             last_modified_date,
             permission
           )

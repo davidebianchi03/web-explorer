@@ -88,6 +88,10 @@
   padding: 0px 5px;
 }
 
+.row.header .cell.sortable:hover{
+  background-color: #e4e4e4;
+}
+
 .row .cell.file-icon {
   width: 20px;
 }

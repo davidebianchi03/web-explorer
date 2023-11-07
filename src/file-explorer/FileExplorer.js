@@ -3,7 +3,6 @@ import "./FileExplorer.css";
 import { Component } from "react";
 import enter_icon from "../img/enter.svg";
 import return_icon from "../img/return.svg";
-import DataTable from "react-data-table-component";
 import { GetChildrenElements } from "../http-requests/http-requests";
 import Swal from "sweetalert2";
 import { ContextMenu } from "../context-menu/context-menu";
@@ -23,6 +22,9 @@ export class FileExplorer extends Component {
     if (props.connection.path) {
       this.path = props.connection.path;
     }
+    this.size_sort_ascending = false;
+    this.name_sort_ascending = false;
+    this.last_modified_sort_ascending = false;
   }
 
   componentDidMount() {
@@ -45,6 +47,7 @@ export class FileExplorer extends Component {
               type: child.type,
               last_modified: child.last_modified,
               size: child.size,
+              real_size: child.real_size,
               permissions:
                 (child.permissions.read ? "r" : "") +
                 (child.permissions.write ? "w" : "") +
@@ -113,7 +116,9 @@ export class FileExplorer extends Component {
           </span>
           <span className="cell file-name">{row.name}</span>
           <span className="cell file-type">{row.type}</span>
-          <span className="cell file-last-modified">{row.last_modified}</span>
+          <span className="cell file-last-modified">
+            {new Date(row.last_modified).toLocaleDateString() + " " + new Date(row.last_modified).toLocaleTimeString()}
+          </span>
           <span className="cell file-size">{row.size}</span>
           <span className="cell file-permissions">{row.permissions}</span>
         </div>
@@ -139,10 +144,10 @@ export class FileExplorer extends Component {
           <div>
             <div className="row header">
               <span className="cell file-icon"></span>
-              <span className="cell file-name">Name</span>
+              <span className="cell sortable file-name" onClick={() => { this.orderBy("name") }}>Name</span>
               <span className="cell file-type">Type</span>
-              <span className="cell file-last-modified">Last Modified</span>
-              <span className="cell file-size">Size</span>
+              <span className="cell sortable file-last-modified" onClick={() => { this.orderBy("last_modified") }}>Last Modified</span>
+              <span className="cell sortable file-size" onClick={() => { this.orderBy("size") }}>Size</span>
               <span className="cell file-permissions">Permissions</span>
             </div>
             <div className="rows">
@@ -152,6 +157,45 @@ export class FileExplorer extends Component {
         </div>
       </div>
     );
+  }
+
+  orderBy(field) {
+    function _compare_by_name(a, b) {
+      return a.name.localeCompare(b.name);
+    }
+
+    function _compare_by_size(a, b) {
+      return a.real_size - b.real_size;
+    }
+
+    function _compare_by_last_modified(a, b) {
+      return Date.parse(a.last_modified) - Date.parse(b.last_modified);
+    }
+
+    let sorted_items = this.state.items;
+    if (field === 'name') {
+      sorted_items.sort(_compare_by_name);
+      this.name_sort_ascending = !this.name_sort_ascending;
+      if (!this.name_sort_ascending) {
+        sorted_items.reverse();
+      }
+    }
+    else if (field === 'size') {
+      sorted_items.sort(_compare_by_size);
+      this.size_sort_ascending = !this.size_sort_ascending;
+      if (!this.size_sort_ascending) {
+        sorted_items.reverse();
+      }
+    }
+    else if (field === 'last_modified') {
+      sorted_items.sort(_compare_by_last_modified);
+      this.last_modified_sort_ascending = !this.last_modified_sort_ascending;
+      if (!this.last_modified_sort_ascending) {
+        sorted_items.reverse();
+      }
+    }
+
+    this.setState({ items: sorted_items });
   }
 
   rowMouseEnter(row) {
@@ -168,7 +212,7 @@ export class FileExplorer extends Component {
 
   rowClick(event, row) {
     let click_count = event.detail;
-    if (click_count == 2) {
+    if (click_count === 2) {
       this.openChild(row)
     }
   }
