@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as tar from "tar";
-import * as zlib from "zlib";
 import * as path from "path";
 import { Request, Response, Router } from "express";
 import { GetConnectionByUuid, GetConnections } from "../db/data-queries";
