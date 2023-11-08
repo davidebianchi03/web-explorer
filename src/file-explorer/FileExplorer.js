@@ -3,7 +3,7 @@ import "./FileExplorer.css";
 import { Component } from "react";
 import enter_icon from "../img/enter.svg";
 import return_icon from "../img/return.svg";
-import { GetChildrenElements } from "../http-requests/http-requests";
+import { GetChildrenElements, UploadFile } from "../http-requests/http-requests";
 import Swal from "sweetalert2";
 import { ContextMenu } from "../context-menu/context-menu";
 
@@ -13,6 +13,7 @@ export class FileExplorer extends Component {
     this.connection = props.connection;
     this.state = {
       items: [],
+      show_drop: false,
     };
     this.path = "/";
     this.selected_row = null;
@@ -89,16 +90,6 @@ export class FileExplorer extends Component {
   }
 
   render() {
-
-    // <DataTable
-    //         columns={columns}
-    //         data={this.state.items}
-    //         customStyles={CustomStyle}
-    //         onRowDoubleClicked={(row) => this.openChild(row)}
-    //         onRowMouseEnter={(row) => this.rowMouseEnter(row)}
-    //         onRowMouseLeave={(row) => this.rowMouseLeave(row)}
-    //       />
-
     let rows = [];
     for (let i = 0; i < this.state.items.length; i++) {
       let row = this.state.items[i];
@@ -140,7 +131,32 @@ export class FileExplorer extends Component {
             </button>
           </div>
         </div>
-        <div onContextMenu={(event) => this.showContextMenu(event)}>
+        <div
+          onContextMenu={(event) => this.showContextMenu(event)}
+          onDragOver={(e) => {
+            // console.log("drag enter")
+            e.preventDefault();
+            this.setState({ show_drop: true });
+          }}
+          onDragLeave={(e) => {
+            // console.log("drag leave")
+            e.preventDefault();
+            this.setState({ show_drop: false });
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            this.uploadFiles(e.dataTransfer.files);
+            this.setState({ show_drop: false });
+          }}
+        >
+          {
+            // this.state.show_drop ?
+            //   <div className="dropzone">
+            //     <p>Drop the file to upload here</p>
+            //   </div>
+            //   :
+            //   null
+          }
           <div>
             <div className="row header">
               <span className="cell file-icon"></span>
@@ -150,7 +166,7 @@ export class FileExplorer extends Component {
               <span className="cell sortable file-size" onClick={() => { this.orderBy("size") }}>Size</span>
               <span className="cell file-permissions">Permissions</span>
             </div>
-            <div className="rows">
+            <div className={this.state.show_drop ? "rows scroll-disabled" : "rows "}>
               {rows}
             </div>
           </div>
@@ -263,4 +279,14 @@ export class FileExplorer extends Component {
       this.context_menu_ref.current.displayContextMenu(left, top, this.selected_row, this.selected_row_type);
     }
   }
+
+  uploadFiles(files) {
+
+    for (let i = 0; i < files.length; i++) {
+      let path = this.path[this.path.length - 1] == "/" ? this.path : this.path + "/";
+      path += files[i].name;
+      UploadFile(path, files[i])
+    }
+  }
+
 }

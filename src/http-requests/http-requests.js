@@ -85,3 +85,24 @@ export async function DownloadPath(path, filename) {
     };
   }
 }
+
+export async function UploadFile(path, file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  axios
+    .post(GetServerUrl() + `/data/upload/${encodeURIComponent(path)}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((response) => {
+      console.log("File uploaded successfully!");
+      // Handle success, e.g., display a success message to the user
+    })
+    .catch((error) => {
+      console.error("Error uploading the file:", error);
+      // Handle the error, e.g., display an error message to the user
+    });
+
+}

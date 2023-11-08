@@ -3,6 +3,7 @@ import { router as data_router } from "./routes/data";
 import cors from "cors";
 import path from "path";
 import { LoadConnectionsFromEnvironment } from "./utils";
+import multer from "multer";
 
 export function createApp(production: boolean): Express {
   const app: Express = express();
@@ -28,6 +29,11 @@ export function createApp(production: boolean): Express {
       origin: "*",
     })
   );
+
+  // body parser
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(multer().any());
 
   // routes
   app.use("/data", data_router);

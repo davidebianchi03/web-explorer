@@ -9,7 +9,6 @@ import {
   getPermissions,
   isDirectory,
 } from "../data-source/local";
-
 export const router = Router();
 
 router.get("/connections/:id?", async (req: Request, res: Response) => {
@@ -85,3 +84,29 @@ router.get("/download/:path", async (req: Request, res: Response) => {
     return;
   }
 });
+
+router.post("/upload/:path", async (req: Request, res: Response) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).json({ message: "Missing field 'file'" });
+  }
+
+  let uploaded_files = req.files as Express.Multer.File[];
+  let file = null;
+  for(let i=0;i<uploaded_files.length;i++){
+    if(uploaded_files[i].fieldname == "file"){
+      file = uploaded_files[i] as Express.Multer.File;
+      break;
+    }
+  }
+
+  if(!file){
+    return res.status(400).json({ message: "Missing field 'file'" });
+  }
+
+  // console.log(file.mv)
+
+
+  res.status(200).json({message:"File successfully uploaded"});
+  return;
+});
+

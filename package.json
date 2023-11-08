@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@prisma/client": "^5.5.2",
+    "@types/multer": "^1.4.10",
     "axios": "^1.4.0",
     "concurrently": "^8.2.0",
     "cors": "^2.8.5",
@@ -11,6 +12,7 @@
     "express": "^4.18.2",
     "istextorbinary": "^7.0.0",
     "monaco-editor": "^0.44.0",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -18,9 +20,9 @@
     "react-scripts": "5.0.1",
     "react-winbox": "^1.5.0",
     "sweetalert2": "^11.9.0",
-    "typescript": "^5.1.6",
     "tar": "^6.2.0",
     "ts-node": "^10.9.1",
+    "typescript": "^5.1.6",
     "web-vitals": "^3.5.0",
     "zlib": "^1.0.5"
   },
@@ -30,14 +32,14 @@
     }
   },
   "devDependencies": {
-    "prisma": "^5.5.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/node": "^20.8.10",
-    "@types/tar": "^6.1.7"
+    "@types/tar": "^6.1.7",
+    "prisma": "^5.5.2"
   },
   "scripts": {
     "start:react": "react-scripts start",
