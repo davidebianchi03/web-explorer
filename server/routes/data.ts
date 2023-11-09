@@ -104,7 +104,7 @@ router.post("/upload/:path", async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Missing field 'file'" });
   }
 
-  if(fs.existsSync(req.params.path)){
+  if (fs.existsSync(req.params.path)) {
     return res.status(409).json({ message: "Path already exists" });
   }
 
@@ -113,5 +113,24 @@ router.post("/upload/:path", async (req: Request, res: Response) => {
     return res.status(200).json({ message: "File successfully uploaded" });
   } catch (error) {
     return res.status(500).json({ error: error });
+  }
+});
+
+router.delete("/delete/:path", async (req: Request, res: Response) => {
+  if (!fs.existsSync(req.params.path)) {
+    return res.status(404).json({ message: "Selected path does not exist" });
+  }
+
+  try {
+    if (isDirectory(req.params.path)) {
+      fs.rmSync(req.params.path, { recursive: true, force: true });
+    } else {
+      fs.unlinkSync(req.params.path);
+    }
+    return res
+      .status(200)
+      .json({ message: "File has been successfully deleted" });
+  } catch (error) {
+    return res.status(500).json(error);
   }
 });

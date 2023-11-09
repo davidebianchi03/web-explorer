@@ -280,13 +280,23 @@ export class FileExplorer extends Component {
     }
   }
 
-  uploadFiles(files) {
+  async uploadFiles(files) {
 
     for (let i = 0; i < files.length; i++) {
       let path = this.path[this.path.length - 1] == "/" ? this.path : this.path + "/";
       path += files[i].name;
-      UploadFile(path, files[i])
-    }
-  }
 
+      let response = await UploadFile(path, files[i])
+      console.log(response)
+      if (response.error) {
+        Swal.fire(
+          "Cannot upload file",
+          response.data.response.data.message ? response.data.response.data.message : response.data.message,
+          "error"
+        );
+      }
+    }
+
+    this.updateChildrenElements();
+  }
 }

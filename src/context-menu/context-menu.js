@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import "./context-menu.css";
-import { DownloadPath } from "../http-requests/http-requests";
+import { DeletePath, DownloadPath } from "../http-requests/http-requests";
 import open_icon from "../img/open.png";
 import download_icon from "../img/download.png";
 import menu_icon from "../img/menu.png";
 import upload_icon from "../img/upload.png";
+import trash_icon from "../img/trash.png";
 import Swal from "sweetalert2";
 
 export class ContextMenu extends Component {
@@ -55,6 +56,10 @@ export class ContextMenu extends Component {
             <img src={upload_icon} alt="" />
             <span>Upload</span>
           </li>
+          <li onClick={this.deletePath}>
+            <img src={trash_icon} alt="" />
+            <span>Delete</span>
+          </li>
           <li>
             <img src={menu_icon} alt="" />
             <span>Properties</span>
@@ -76,5 +81,29 @@ export class ContextMenu extends Component {
     Swal.fire("Downloading file", "It may take a lot of time...", 'info');
     await DownloadPath(this.state.filepath, filename);
     Swal.close();
+  }
+
+  deletePath = async () => {
+    let path = this.state.filepath;
+    let result = await Swal.fire({
+      title: "Are you sure?",
+      text: `You will not be able to recover the element at ${path}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: '#DD6B55',
+      confirmButtonText: 'Yes',
+      cancelButtonText: "No",
+    });
+
+    if (result.isConfirmed) {
+      let response = await DeletePath(this.state.filepath);
+      if (response.error) {
+        Swal.fire(
+          "Cannot delete selected item",
+          response.data.response.data.message ? response.data.response.data.message : response.data.message,
+          "error"
+        );
+      }
+    }
   }
 }
