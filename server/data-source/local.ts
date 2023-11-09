@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { humanFileSize } from "../utils";
 import { isText } from "istextorbinary";
+import multer from "multer";
 
 function IsTextOrBinary(filepath: string): boolean {
   let is_text = isText(filepath);
@@ -59,7 +60,7 @@ export async function GetChildren(_path: string) {
   for (let i = 0; i < children.length; i++) {
     let child_element_path = path.join(_path, children[i]);
     let file_stats = fs.statSync(child_element_path);
-    let last_modified_date =file_stats.mtime.toISOString();
+    let last_modified_date = file_stats.mtime.toISOString();
     let permission = getPermissions(child_element_path);
     if (fs.statSync(child_element_path).isDirectory()) {
       response_body.children.push(
@@ -147,3 +148,14 @@ export function getPermissions(path: string): Permissions {
     execute: execute,
   };
 }
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "../../tmp/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+export const upload = multer({ storage });

@@ -8,6 +8,7 @@ import {
   GetChildren,
   getPermissions,
   isDirectory,
+  upload,
 } from "../data-source/local";
 export const router = Router();
 
@@ -92,21 +93,25 @@ router.post("/upload/:path", async (req: Request, res: Response) => {
 
   let uploaded_files = req.files as Express.Multer.File[];
   let file = null;
-  for(let i=0;i<uploaded_files.length;i++){
-    if(uploaded_files[i].fieldname == "file"){
+  for (let i = 0; i < uploaded_files.length; i++) {
+    if (uploaded_files[i].fieldname == "file") {
       file = uploaded_files[i] as Express.Multer.File;
       break;
     }
   }
 
-  if(!file){
+  if (!file) {
     return res.status(400).json({ message: "Missing field 'file'" });
   }
 
-  // console.log(file.mv)
+  if(fs.existsSync(req.params.path)){
+    return res.status(409).json({ message: "Path already exists" });
+  }
 
-
-  res.status(200).json({message:"File successfully uploaded"});
-  return;
+  try {
+    fs.writeFileSync(req.params.path, file.buffer);
+    return res.status(200).json({ message: "File successfully uploaded" });
+  } catch (error) {
+    return res.status(500).json({ error: error });
+  }
 });
-
