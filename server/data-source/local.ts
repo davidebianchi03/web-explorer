@@ -159,3 +159,11 @@ const storage = multer.diskStorage({
 });
 
 export const upload = multer({ storage });
+
+export function getFileContent(path: string): string {
+  if (fs.existsSync(path)) {
+    return fs.readFileSync(path, { encoding: "utf-8" });
+  } else {
+    return "";
+  }
+}

@@ -54,24 +54,31 @@ export default class App extends React.Component {
     )
   }
 
-  openConnection(connection) {
+  addWindow = (window) => {
+    console.log(this)
     let connections = this.state.connections;
-    let window_title = `[${connection.name}] - ${connection.path === '' ? '/' : connection.path}`;
-    connections.push(
-      <WinBox
-        width={500}
-        height={300}
-        x="center"
-        y={30}
-        title={window_title}
-        bottom={0}
-        className='modern'
-        background="#ff5100"
-        noFull={true}
-      >
-        <FileExplorer connection={connection} />
-      </WinBox>
-    );
+    connections.push(window);
     this.setState({ connections: connections });
+  }
+
+  openConnection(connection) {
+    let window_title = `[${connection.name}] - ${connection.path === '' ? '/' : connection.path}`;
+    this.addWindow(
+    <WinBox
+      width={500}
+      height={300}
+      x="center"
+      y={30}
+      title={window_title}
+      bottom={0}
+      className='modern'
+      background="#ff5100"
+      noFull={true}
+    >
+      <FileExplorer 
+        connection={connection}
+        handleAddWindow={this.addWindow} />
+    </WinBox>
+    );
   }
 }

@@ -126,3 +126,20 @@ export async function DeletePath(path) {
     };
   }
 }
+
+export async function GetFileContent(path){
+  try {
+    let response = await axios.get(GetServerUrl() + `/data/content/${encodeURIComponent(path)}`);
+    return {
+      error: false,
+      data: response.data,
+      statusCode: response.status,
+    };
+  } catch (error) {
+    return {
+      error: true,
+      data: error,
+      statusCode: error.response.status,
+    };
+  }
+}

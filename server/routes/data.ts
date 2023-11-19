@@ -6,6 +6,7 @@ import { GetConnectionByUuid, GetConnections } from "../db/data-queries";
 import {
   Exists,
   GetChildren,
+  getFileContent,
   getPermissions,
   isDirectory,
   upload,
@@ -130,6 +131,18 @@ router.delete("/delete/:path", async (req: Request, res: Response) => {
     return res
       .status(200)
       .json({ message: "File has been successfully deleted" });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+router.get("/content/:path", async (req: Request, res: Response) => {
+  if (!fs.existsSync(req.params.path)) {
+    return res.status(404).json({ message: "Selected path does not exist" });
+  }
+
+  try {
+    return res.status(200).json({content: getFileContent(req.params.path)});
   } catch (error) {
     return res.status(500).json(error);
   }

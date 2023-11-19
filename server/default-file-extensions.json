@@ -1,0 +1,86 @@
+[
+    {
+        "name": "javascript",
+        "extensions":[
+            "js",
+            "jsx"
+        ]
+    },
+    {
+        "name": "typescript",
+        "extensions":[
+            "ts",
+            "tsx"
+        ]
+    },
+    {
+        "name": "css",
+        "extensions":[
+            "css",
+            "scss",
+            "less"
+        ]
+    },
+    {
+        "name": "html",
+        "extensions":[
+            "html",
+            "htm"
+        ]
+    },
+    {
+        "name": "json",
+        "extensions":[
+            "json"
+        ]
+    },
+    {
+        "name": "xml",
+        "extensions":[
+            "xml"
+        ]
+    },
+    {
+        "name": "php",
+        "extensions":[
+            "php"
+        ]
+    },
+    {
+        "name": "C#",
+        "extensions":[
+            "cs"
+        ]
+    },
+    {
+        "name": "markdown",
+        "extensions":[
+            "md",
+            "rst"
+        ]
+    },
+    {
+        "name": "java",
+        "extensions":[
+            "java"
+        ]
+    },
+    {
+        "name": "vb",
+        "extensions":[
+            "vb"
+        ]
+    },
+    {
+        "name": "batch",
+        "extensions":[
+            "sh"
+        ]
+    },
+    {
+        "name": "powershell",
+        "extensions":[
+            "ps1"
+        ]
+    }
+]

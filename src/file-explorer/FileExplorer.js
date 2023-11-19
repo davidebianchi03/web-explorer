@@ -9,6 +9,8 @@ import open_icon from "../img/open.png";
 import download_icon from "../img/download.png";
 import menu_icon from "../img/menu.png";
 import trash_icon from "../img/trash.png";
+import WinBox from 'react-winbox';
+import FileEditor from "../file-editor/file-editor";
 
 export class FileExplorer extends Component {
   constructor(props) {
@@ -28,6 +30,7 @@ export class FileExplorer extends Component {
     this.size_sort_ascending = false;
     this.name_sort_ascending = false;
     this.last_modified_sort_ascending = false;
+    this.addWindow = props.handleAddWindow;
   }
 
   componentDidMount() {
@@ -248,8 +251,29 @@ export class FileExplorer extends Component {
         (this.path[this.path.length - 1] === "/" ? "" : "/") +
         row.name;
       this.updateChildrenElements();
-    } else {
-      // it's a file
+    }
+    else if (row.type === "txt-file") {
+      let file_editor = (
+        <WinBox
+          width={700}
+          height={300}
+          x="center"
+          y={100}
+          title={row.name}
+          bottom={0}
+          className='modern'
+          background="#0077ff"
+          noFull={true}
+        >
+          <FileEditor filepath={this.path +
+            (this.path[this.path.length - 1] === "/" ? "" : "/") +
+            row.name} />
+        </WinBox>
+      );
+      this.addWindow(file_editor);
+    }
+    else {
+      // it's bin a file
     }
   }
 
@@ -267,12 +291,17 @@ export class FileExplorer extends Component {
 
   showContextMenu(event, row) {
     event.preventDefault();
+    let ctrl_key_pressed = event.ctrlKey;
 
-    if (!this.state.selected_items.includes(row)) {
+    if (!this.state.selected_items.includes(row) && ctrl_key_pressed) {
       let items = this.state.selected_items;
       items.push(row);
       this.setState({
         selected_items: items
+      });
+    } else {
+      this.setState({
+        selected_items: [row]
       });
     }
 
