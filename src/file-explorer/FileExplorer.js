@@ -1,11 +1,16 @@
 import React from "react";
 import "./FileExplorer.css";
 import { Component } from "react";
-import enter_icon from "../img/enter.svg";
 import return_icon from "../img/return.svg";
-import { GetChildrenElements, UploadFile } from "../http-requests/http-requests";
+import { DeletePath, DownloadPath, GetChildrenElements, UploadFile } from "../http-requests/http-requests";
 import Swal from "sweetalert2";
 import { ContextMenu } from "../context-menu/context-menu";
+
+import open_icon from "../img/open.png";
+import download_icon from "../img/download.png";
+import menu_icon from "../img/menu.png";
+import upload_icon from "../img/upload.png";
+import trash_icon from "../img/trash.png";
 
 export class FileExplorer extends Component {
   constructor(props) {
@@ -14,10 +19,9 @@ export class FileExplorer extends Component {
     this.state = {
       items: [],
       show_drop: false,
+      selected_items: [],
     };
     this.path = "/";
-    this.selected_row = null;
-    this.selected_row_type = null;
     this.context_menu_ref = React.createRef();
     this.current_element_ref = React.createRef();
     if (props.connection.path) {
@@ -93,14 +97,14 @@ export class FileExplorer extends Component {
     let rows = [];
     for (let i = 0; i < this.state.items.length; i++) {
       let row = this.state.items[i];
+      let selected = this.state.selected_items.includes(row);
 
       rows.push(
         <div
           key={"row" + i}
-          className="row"
-          onMouseEnter={() => { this.rowMouseEnter(row) }}
-          onMouseLeave={() => { this.rowMouseLeave(row) }}
+          className={selected ? "row selected" : "row"}
           onClick={(event) => this.rowClick(event, row)}
+          onContextMenu={(event) => this.showContextMenu(event, row)}
         >
           <span className="cell file-icon">
             <img src={row.icon} alt="File icon" className="file-icon" />
@@ -115,8 +119,6 @@ export class FileExplorer extends Component {
         </div>
       )
     }
-
-
     return (
       <div className="file-explorer" ref={this.current_element_ref}>
         <ContextMenu ref={this.context_menu_ref} />
@@ -132,14 +134,11 @@ export class FileExplorer extends Component {
           </div>
         </div>
         <div
-          onContextMenu={(event) => this.showContextMenu(event)}
           onDragOver={(e) => {
-            // console.log("drag enter")
             e.preventDefault();
             this.setState({ show_drop: true });
           }}
           onDragLeave={(e) => {
-            // console.log("drag leave")
             e.preventDefault();
             this.setState({ show_drop: false });
           }}
@@ -214,21 +213,32 @@ export class FileExplorer extends Component {
     this.setState({ items: sorted_items });
   }
 
-  rowMouseEnter(row) {
-    this.selected_row =
-      (this.path[this.path.length - 1] === "/" ? this.path : this.path + "/") +
-      row.name;
-    this.selected_row_type = row.type;
-  }
-
-  rowMouseLeave(row) {
-    this.selected_row = null;
-    this.selected_row_type = null;
-  }
-
   rowClick(event, row) {
     let click_count = event.detail;
-    if (click_count === 2) {
+    let button = event.button;
+    let ctrl_key_pressed = event.ctrlKey;
+
+    if (click_count === 1 && button === 0) {
+      if (ctrl_key_pressed) {
+        let selected_rows = this.state.selected_items;
+        selected_rows.push(row);
+        this.setState({
+          selected_items: selected_rows
+        });
+      } else {
+        let just_selected = this.state.selected_items.includes(row);
+        if (just_selected) {
+          this.setState({
+            selected_items: []
+          });
+        } else {
+          this.setState({
+            selected_items: [row]
+          });
+        }
+      }
+    }
+    else if (click_count === 2) {
       this.openChild(row)
     }
   }
@@ -258,36 +268,117 @@ export class FileExplorer extends Component {
     }
   }
 
-  showContextMenu(event) {
+  showContextMenu(event, row) {
     event.preventDefault();
-    if (this.selected_row) {
-      let element_bounding_client_rect = this.current_element_ref.current.getBoundingClientRect();
 
-      let left = event.pageX - element_bounding_client_rect.left;
-      let top = event.pageY - element_bounding_client_rect.top;
-
-      if (left < 25) {
-        left = 25;
-      }
-      if (top < 25) {
-        top = 25;
-      }
-
-      if (left > element_bounding_client_rect.width - 175) {
-        left = element_bounding_client_rect.width - 175;
-      }
-      this.context_menu_ref.current.displayContextMenu(left, top, this.selected_row, this.selected_row_type);
+    if (!this.state.selected_items.includes(row)) {
+      let items = this.state.selected_items;
+      items.push(row);
+      this.setState({
+        selected_items: items
+      });
     }
+
+    let element_bounding_client_rect = this.current_element_ref.current.getBoundingClientRect();
+
+    let left = event.pageX - element_bounding_client_rect.left;
+    let top = event.pageY - element_bounding_client_rect.top;
+
+    if (left < 25) {
+      left = 25;
+    }
+    if (top < 25) {
+      top = 25;
+    }
+
+    if (left > element_bounding_client_rect.width - 175) {
+      left = element_bounding_client_rect.width - 175;
+    }
+    let options = [
+      {
+        title: "Open",
+        icon: open_icon,
+        action: () => { alert("Hello") }
+      },
+      {
+        title: "Download",
+        icon: download_icon,
+        action: this.downloadItems
+      },
+      // {
+      //   title: "Upload",
+      //   icon: upload_icon,
+      //   action: () => { alert("Hello") }
+      // },
+      {
+        title: "Delete",
+        icon: trash_icon,
+        action: this.deleteItems
+      },
+      {
+        title: "Properties",
+        icon: menu_icon,
+        action: () => { alert("Hello") }
+      },
+    ]
+    this.context_menu_ref.current.display(left, top, options);
+
+  }
+
+  downloadItems = async () => {
+    Swal.fire("Downloading files", "It may take a lot of time...", 'info');
+    for (let i = 0; i < this.state.selected_items.length; i++) {
+      let row = this.state.selected_items[i];
+      let row_path = this.path[this.path.length - 1] === "/" ? (this.path + row.name) : (this.path + "/" + row.name);
+
+      let result = await DownloadPath(row_path, row.name);
+      if (result.error) {
+        await Swal.fire(result.statusCode.toString(), result.error, 'error');
+      }
+    }
+    Swal.close();
+  }
+
+  deleteItems = async () => {
+    let message = "";
+    if (this.state.selected_items.length > 1) {
+      message = `You will not be able to recover selected items`;
+    } else {
+      message = `You will not be able to recover element at ${this.path + this.state.selected_items[0].name}`;
+    }
+
+    let result = await Swal.fire({
+      title: "Are you sure?",
+      text: message,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: '#DD6B55',
+      confirmButtonText: 'Yes',
+      cancelButtonText: "No",
+    });
+
+    if (result.isConfirmed) {
+      for (let i = 0; i < this.state.selected_items.length; i++) {
+        let row = this.state.selected_items[i];
+        let row_path = this.path[this.path.length - 1] === "/" ? (this.path + row.name) : (this.path + "/" + row.name);
+  
+        let result = await DeletePath(row_path);
+        if (result.error) {
+          await Swal.fire(result.statusCode, result.error, 'error');
+        }
+      }
+    }
+
+    this.updateChildrenElements();
   }
 
   async uploadFiles(files) {
 
     for (let i = 0; i < files.length; i++) {
-      let path = this.path[this.path.length - 1] == "/" ? this.path : this.path + "/";
+      let path = this.path[this.path.length - 1] === "/" ? this.path : this.path + "/";
       path += files[i].name;
 
-      let response = await UploadFile(path, files[i])
-      console.log(response)
+      let response = await UploadFile(path, files[i]);
       if (response.error) {
         Swal.fire(
           "Cannot upload file",

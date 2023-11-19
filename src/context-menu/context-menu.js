@@ -1,11 +1,6 @@
 import React, { Component } from "react";
 import "./context-menu.css";
 import { DeletePath, DownloadPath } from "../http-requests/http-requests";
-import open_icon from "../img/open.png";
-import download_icon from "../img/download.png";
-import menu_icon from "../img/menu.png";
-import upload_icon from "../img/upload.png";
-import trash_icon from "../img/trash.png";
 import Swal from "sweetalert2";
 
 export class ContextMenu extends Component {
@@ -15,11 +10,11 @@ export class ContextMenu extends Component {
       display: false,
       pos_x: 0,
       pos_y: 0,
-      filepath: null,
-      item_type: null,
+      options: []
     };
     this.context_menu_ref = React.createRef();
   }
+
 
   componentDidMount = () => {
     document.addEventListener('click', (event) => {
@@ -29,81 +24,39 @@ export class ContextMenu extends Component {
     })
   }
 
-  displayContextMenu = (posx, posy, filepath, item_type) => {
+  display = (posx, posy, options) => {
     this.setState({
       display: true,
       pos_x: posx,
       pos_y: posy,
-      filepath: filepath,
-      item_type: item_type,
+      options: options,
     });
-
   }
 
   render() {
     if (this.state.display) {
+
+      let options = [];
+      for (let i = 0; i < this.state.options.length; i++) {
+        options.push(
+          <li onClick={this.state.options[i].action}>
+            <img src={this.state.options[i].icon} alt="" />
+            <span>{this.state.options[i].title}</span>
+          </li>
+        );
+      }
       return (
-        <ul className="context-menu" ref={this.context_menu_ref} style={{ top: this.state.pos_y - 20, left: this.state.pos_x - 20 }}>
-          <li>
-            <img src={open_icon} alt="" />
-            <span>Open</span>
-          </li>
-          <li onClick={this.handleDownload}>
-            <img src={download_icon} alt="" />
-            <span>Download</span>
-          </li>
-          <li>
-            <img src={upload_icon} alt="" />
-            <span>Upload</span>
-          </li>
-          <li onClick={this.deletePath}>
-            <img src={trash_icon} alt="" />
-            <span>Delete</span>
-          </li>
-          <li>
-            <img src={menu_icon} alt="" />
-            <span>Properties</span>
-          </li>
+        <ul
+          className="context-menu"
+          ref={this.context_menu_ref}
+          style={{ top: this.state.pos_y - 20, left: this.state.pos_x - 20 }}
+          onContextMenu={(event) => { event.preventDefault(); }}
+        >
+          {options}
         </ul>
       );
     } else {
       return (<div></div>);
-    }
-  }
-
-  handleDownload = async () => {
-    let path = this.state.filepath.split("/");
-
-    let filename = path[path.length - 1];
-    if (this.state.item_type === 'dir') {
-      filename += ".tar.gz";
-    }
-    Swal.fire("Downloading file", "It may take a lot of time...", 'info');
-    await DownloadPath(this.state.filepath, filename);
-    Swal.close();
-  }
-
-  deletePath = async () => {
-    let path = this.state.filepath;
-    let result = await Swal.fire({
-      title: "Are you sure?",
-      text: `You will not be able to recover the element at ${path}`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: '#DD6B55',
-      confirmButtonText: 'Yes',
-      cancelButtonText: "No",
-    });
-
-    if (result.isConfirmed) {
-      let response = await DeletePath(this.state.filepath);
-      if (response.error) {
-        Swal.fire(
-          "Cannot delete selected item",
-          response.data.response.data.message ? response.data.response.data.message : response.data.message,
-          "error"
-        );
-      }
     }
   }
 }

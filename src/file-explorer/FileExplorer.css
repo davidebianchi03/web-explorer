@@ -83,6 +83,10 @@
   user-select: none;
 }
 
+.row.selected{
+  background-color: #00aeff8f;
+}
+
 .row.header{
   font-size: 12px;
   font-weight: 700;
@@ -98,7 +102,7 @@
   user-select: none;
 }
 
-.file-explorer .rows .row:hover{
+.file-explorer .rows .row:hover:not(.selected){
   background-color: #fafafa;
 }
 
