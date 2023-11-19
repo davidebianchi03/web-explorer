@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import "./context-menu.css";
-import { DeletePath, DownloadPath } from "../http-requests/http-requests";
-import Swal from "sweetalert2";
 
 export class ContextMenu extends Component {
   constructor(props) {

@@ -5,11 +5,9 @@ import return_icon from "../img/return.svg";
 import { DeletePath, DownloadPath, GetChildrenElements, UploadFile } from "../http-requests/http-requests";
 import Swal from "sweetalert2";
 import { ContextMenu } from "../context-menu/context-menu";
-
 import open_icon from "../img/open.png";
 import download_icon from "../img/download.png";
 import menu_icon from "../img/menu.png";
-import upload_icon from "../img/upload.png";
 import trash_icon from "../img/trash.png";
 
 export class FileExplorer extends Component {
@@ -120,7 +118,11 @@ export class FileExplorer extends Component {
       )
     }
     return (
-      <div className="file-explorer" ref={this.current_element_ref}>
+      <div className="file-explorer" ref={this.current_element_ref}
+        onDragOver={(e) => {
+          e.preventDefault();
+          this.setState({ show_drop: true });
+        }}>
         <ContextMenu ref={this.context_menu_ref} />
         <div className="header">
           <div className="buttons">
@@ -133,28 +135,23 @@ export class FileExplorer extends Component {
             </button>
           </div>
         </div>
-        <div
-          onDragOver={(e) => {
-            e.preventDefault();
-            this.setState({ show_drop: true });
-          }}
-          onDragLeave={(e) => {
-            e.preventDefault();
-            this.setState({ show_drop: false });
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            this.uploadFiles(e.dataTransfer.files);
-            this.setState({ show_drop: false });
-          }}
-        >
+        <div>
           {
-            // this.state.show_drop ?
-            //   <div className="dropzone">
-            //     <p>Drop the file to upload here</p>
-            //   </div>
-            //   :
-            //   null
+            this.state.show_drop ?
+              <div className="dropzone"
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  this.setState({ show_drop: false });
+                }}
+                onDrop={async (e) => {
+                  e.preventDefault();
+                  this.uploadFiles(e.dataTransfer.files);
+                  this.setState({ show_drop: false });
+                }}>
+                <p>Drop the file to upload here</p>
+              </div>
+              :
+              null
           }
           <div>
             <div className="row header">
@@ -296,31 +293,33 @@ export class FileExplorer extends Component {
     }
     let options = [
       {
-        title: "Open",
-        icon: open_icon,
-        action: () => { alert("Hello") }
-      },
-      {
         title: "Download",
         icon: download_icon,
         action: this.downloadItems
       },
-      // {
-      //   title: "Upload",
-      //   icon: upload_icon,
-      //   action: () => { alert("Hello") }
-      // },
       {
         title: "Delete",
         icon: trash_icon,
         action: this.deleteItems
       },
-      {
-        title: "Properties",
-        icon: menu_icon,
-        action: () => { alert("Hello") }
-      },
     ]
+
+    if (this.state.selected_items.length === 1) {
+      options = [{
+        title: "Open",
+        icon: open_icon,
+        action: () => { alert("Hello") }
+      },]
+        .concat(options)
+        .concat([
+          {
+            title: "Properties",
+            icon: menu_icon,
+            action: () => { alert("Hello") }
+          },
+        ]);
+    }
+
     this.context_menu_ref.current.display(left, top, options);
 
   }
@@ -361,7 +360,7 @@ export class FileExplorer extends Component {
       for (let i = 0; i < this.state.selected_items.length; i++) {
         let row = this.state.selected_items[i];
         let row_path = this.path[this.path.length - 1] === "/" ? (this.path + row.name) : (this.path + "/" + row.name);
-  
+
         let result = await DeletePath(row_path);
         if (result.error) {
           await Swal.fire(result.statusCode, result.error, 'error');
