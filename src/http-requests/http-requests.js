@@ -143,3 +143,20 @@ export async function GetFileContent(path){
     };
   }
 }
+
+export async function GetLanguageFromFileExtension(file_extension){
+  try {
+    let response = await axios.get(GetServerUrl() + `/file-extensions/${encodeURIComponent(file_extension)}`);
+    return {
+      error: false,
+      data: response.data,
+      statusCode: response.status,
+    };
+  } catch (error) {
+    return {
+      error: true,
+      data: error,
+      statusCode: error.response.status,
+    };
+  }
+}

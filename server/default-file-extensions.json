@@ -82,5 +82,38 @@
         "extensions":[
             "ps1"
         ]
+    },
+    {
+        "name": "cpp",
+        "extensions":[
+            "cpp",
+            "hpp"
+        ]
+    },
+    {
+        "name": "c",
+        "extensions":[
+            "c",
+            "h"
+        ]
+    },
+    {
+        "name": "yaml",
+        "extensions":[
+            "yaml",
+            "yml"
+        ]
+    },
+    {
+        "name": "bat",
+        "extensions":[
+            "bat"
+        ]
+    },
+    {
+        "name": "python",
+        "extensions":[
+            "py"
+        ]
     }
 ]

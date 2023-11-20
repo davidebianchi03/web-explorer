@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import { router as data_router } from "./routes/data";
+import { router as file_extension_router } from "./routes/file_extensions";
 import cors from "cors";
 import path from "path";
 import { LoadConnectionsFromEnvironment } from "./utils";
@@ -37,6 +38,7 @@ export function createApp(production: boolean): Express {
 
   // routes
   app.use("/data", data_router);
+  app.use("/file-extensions", file_extension_router);
 
   LoadConnectionsFromEnvironment();
  
