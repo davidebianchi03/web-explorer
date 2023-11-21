@@ -9,6 +9,10 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - 
+        name: Extract tag name
+        id: extract-tag
+        run: echo "Tag name is ${{ github.ref }}"
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -28,4 +32,4 @@ jobs:
           push: true
           tags: |
             dadebia/web-explorer:latest
-            dadebia/web-explorer:${{ steps.build.outputs.version }}
+            dadebia/web-explorer:${{ steps.extract-tag.outputs.tag_name }}
