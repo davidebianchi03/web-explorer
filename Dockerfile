@@ -10,7 +10,7 @@ RUN cd /webexplorer && \
     cd /webexplorer && \
     cp -R ./dist/react ./dist/express/react && \ 
     cp -R ./dist/express ./build && \
-    cp ./docker/.env ./build && \
+    cp ./docker/.env . && \
     rm -R dist && \
     npx prisma db push
 

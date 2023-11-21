@@ -2,6 +2,18 @@ version: '3'
 
 services:
   webexplorer:
-    image: 'webexplorer'
+    image: 'dadebia/web-explorer:latest'
     ports:
-      - 5080:5000
+      - 5000:5000
+    environment:
+      CONNECTIONS: "/volume1;/volume2"
+    volumes:
+      - volume1:/volume1
+      - volume2:/volume2
+
+volumes:
+  volume1:
+    driver: "local"
+  volume2:
+    driver: "local"
+  
