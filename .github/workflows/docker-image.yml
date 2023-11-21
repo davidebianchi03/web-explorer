@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Docker metadata
+        uses: docker/metadata-action@v5
         id: meta
         with:
           images: dadebia/web-explorer
