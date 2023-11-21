@@ -26,4 +26,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: dadebia/web-explorer:${{ env.TAG }} , dadebia/web-explorer:latest
+          tags: |
+            dadebia/web-explorer::latest
+            dadebia/web-explorer::${{ steps.build.outputs.version }}
