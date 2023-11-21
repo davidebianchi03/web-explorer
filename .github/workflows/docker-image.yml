@@ -9,10 +9,10 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - 
-        name: Extract tag name
-        id: extract-tag
-        run: echo "Tag name is ${{ github.ref }}"
+      - name: Docker metadata
+        id: meta
+        with:
+          images: dadebia/web-explorer
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -29,7 +29,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: true
-          tags: |
-            dadebia/web-explorer:latest
-            dadebia/web-explorer:${{ steps.extract-tag.outputs.tag_name }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
