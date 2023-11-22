@@ -55,7 +55,6 @@ export default class App extends React.Component {
   }
 
   addWindow = (window) => {
-    console.log(this)
     let connections = this.state.connections;
     connections.push(window);
     this.setState({ connections: connections });
@@ -71,7 +70,7 @@ export default class App extends React.Component {
       y={30}
       title={window_title}
       bottom={0}
-      className='modern'
+      className='modern front'
       background="#ff5100"
       noFull={true}
     >

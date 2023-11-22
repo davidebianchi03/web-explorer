@@ -38,3 +38,12 @@
     color: #fff;
 }
 
+.editor-container .save-btn{
+    background-color: #292828;
+    border: solid #2b2a2a 1px;
+    border-radius: 4px;
+}
+
+.editor-container .save-btn:hover{
+    background-color: #363636;
+}

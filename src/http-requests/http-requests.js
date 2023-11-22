@@ -127,7 +127,7 @@ export async function DeletePath(path) {
   }
 }
 
-export async function GetFileContent(path){
+export async function GetFileContent(path) {
   try {
     let response = await axios.get(GetServerUrl() + `/data/content/${encodeURIComponent(path)}`);
     return {
@@ -144,12 +144,34 @@ export async function GetFileContent(path){
   }
 }
 
-export async function GetLanguageFromFileExtension(file_extension){
+export async function GetLanguageFromFileExtension(file_extension) {
   try {
     let response = await axios.get(GetServerUrl() + `/file-extensions/${encodeURIComponent(file_extension)}`);
     return {
       error: false,
       data: response.data,
+      statusCode: response.status,
+    };
+  } catch (error) {
+    return {
+      error: true,
+      data: error,
+      statusCode: error.response.status,
+    };
+  }
+}
+
+export async function SaveFile(path, content) {
+  let data = { content: content };
+  try {
+    let response = await axios.post(GetServerUrl() + `/data/content/${encodeURIComponent(path)}`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return {
+      error: false,
+      data: null,
       statusCode: response.status,
     };
   } catch (error) {

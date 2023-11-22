@@ -72,7 +72,6 @@ router.get("/download/:path", async (req: Request, res: Response) => {
       res.status(200);
       return;
     } catch (error) {
-      console.log(error);
       res.status(500).json({ description: "Cannot create tar.gz archive" });
       return;
     }
@@ -142,8 +141,23 @@ router.get("/content/:path", async (req: Request, res: Response) => {
   }
 
   try {
-    return res.status(200).json({content: getFileContent(req.params.path)});
+    return res.status(200).json({ content: getFileContent(req.params.path) });
   } catch (error) {
-    return res.status(500).json(error);
+    return res.status(500).json({ message: error });
+  }
+});
+
+router.post("/content/:path", async (req: Request, res: Response) => {
+  if (!req.body.content) {
+    return res.status(200).json({ message: "Missing 'content' param" });
+  }
+
+  try {
+    fs.writeFileSync(req.params.path, req.body.content);
+    return res
+      .status(200)
+      .json({ message: "File has been successfully saved" });
+  } catch (error) {
+    return res.status(500).json({ message: error });
   }
 });

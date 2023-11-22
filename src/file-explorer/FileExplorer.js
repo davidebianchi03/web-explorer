@@ -261,7 +261,7 @@ export class FileExplorer extends Component {
           y={100}
           title={row.name}
           bottom={0}
-          className='modern'
+          className='modern front'
           background="#0077ff"
           noFull={true}
         >
