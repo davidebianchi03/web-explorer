@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [Unreleased]
+## [0.0.4] - 2023-11-22
 
 - Viewer and editor for text files
 
