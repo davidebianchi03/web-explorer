@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [0.0.5] - 2023-11-26
+
+- Created context menu option to create items
+- Created context menu option to rename items
+
 ## [0.0.4] - 2023-11-22
 
 - Viewer and editor for text files
