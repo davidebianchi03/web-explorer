@@ -2,7 +2,7 @@ import React from "react";
 import "./FileExplorer.css";
 import { Component } from "react";
 import return_icon from "../img/return.svg";
-import { DeletePath, DownloadPath, GetChildrenElements, RenamePath, UploadFile } from "../http-requests/http-requests";
+import { CreatePath, DeletePath, DownloadPath, GetChildrenElements, RenamePath, UploadFile } from "../http-requests/http-requests";
 import Swal from "sweetalert2";
 import { ContextMenu } from "../context-menu/context-menu";
 import open_icon from "../img/open.png";
@@ -361,14 +361,14 @@ export class FileExplorer extends Component {
           {
             title: "Create file",
             icon: create_file_icon,
-            action: () => { alert("Hello") }
+            action: () => { this.createPath(true); }
           },
         ])
         .concat([
           {
             title: "Create folder",
             icon: create_folder_icon,
-            action: () => { alert("Hello") }
+            action: () => { this.createPath(false); }
           },
         ]);
     }
@@ -467,6 +467,47 @@ export class FileExplorer extends Component {
         );
       }
       this.updateChildrenElements();
+    }
+  }
+
+  createPath = async (is_file) => {
+    let result = null;
+    let type = "";
+    if (is_file) {
+      result = await Swal.fire({
+        title: `Create new file`,
+        text: "Enter the name of the file",
+        input: 'text',
+        inputValue: "",
+        inputPlaceholder: "Filename",
+        showCancelButton: true
+      });
+      type = "file";
+    } else {
+      result = await Swal.fire({
+        title: `Create new file`,
+        text: "Enter the name of the folder",
+        input: 'text',
+        inputValue: "",
+        inputPlaceholder: "Foldername",
+        showCancelButton: true
+      });
+      type = "dir";
+    }
+
+    if (result.isConfirmed) {
+      let path = this.path[this.path.length - 1] === "/" ? this.path : this.path + "/";
+      path += result.value;
+      let response = await CreatePath(path, type);
+      if (response.error) {
+        Swal.fire(
+          `Cannot create ${is_file ? "file" : "folder"}`,
+          response.data.response.data.message ? response.data.response.data.message : response.data.message,
+          "error"
+        );
+      }else{
+        this.updateChildrenElements();
+      }
     }
   }
 }

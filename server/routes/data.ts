@@ -166,7 +166,6 @@ router.patch("/rename/:path", async (req: Request, res: Response) => {
   if (!req.body.filename) {
     return res.status(400).json({ message: "Missing 'filename' param" });
   }
-  console.log(req.params.path)
   if (!fs.existsSync(req.params.path)) {
     return res.status(400).json({ message: "Selected path does not exist" });
   }
@@ -183,6 +182,36 @@ router.patch("/rename/:path", async (req: Request, res: Response) => {
     return res
       .status(200)
       .json({ message: "Path has been successfully renamed" });
+  }
+  catch (error) {
+    return res.status(500).json({ message: error });
+  }
+});
+
+router.post("/path", async (req: Request, res: Response) => {
+  if (!req.body.type) {
+    return res.status(400).json({ message: "Missing 'type' param" });
+  }
+  if (req.body.type != "dir" && req.body.type != "file") {
+    return res.status(400).json({ message: "Invalid string for 'type', valid values are 'dir' and 'file'" });
+  }
+  if (!req.body.path) {
+    return res.status(400).json({ message: "Missing 'path' param" });
+  }
+  if (fs.existsSync(req.body.path)) {
+    return res.status(400).json({ message: "Path already exists" });
+  }
+
+  try {
+    if (req.body.type == "dir") {
+      fs.mkdirSync(req.body.path);
+    } else {
+      fs.writeFileSync(req.body.path, "");
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Path has been successfully created" });
   }
   catch (error) {
     return res.status(500).json({ message: error });

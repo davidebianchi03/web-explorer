@@ -183,10 +183,32 @@ export async function SaveFile(path, content) {
   }
 }
 
-export async function RenamePath(path, new_name){
+export async function RenamePath(path, new_name) {
   let data = { filename: new_name };
   try {
     let response = await axios.patch(GetServerUrl() + `/data/rename/${encodeURIComponent(path)}`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return {
+      error: false,
+      data: null,
+      statusCode: response.status,
+    };
+  } catch (error) {
+    return {
+      error: true,
+      data: error,
+      statusCode: error.response.status,
+    };
+  }
+}
+
+export async function CreatePath(path, type) {
+  let data = { path: path, type: type };
+  try {
+    let response = await axios.post(GetServerUrl() + `/data/path`, data, {
       headers: {
         "Content-Type": "application/json",
       },
