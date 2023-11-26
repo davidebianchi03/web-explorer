@@ -149,7 +149,7 @@ router.get("/content/:path", async (req: Request, res: Response) => {
 
 router.post("/content/:path", async (req: Request, res: Response) => {
   if (!req.body.content) {
-    return res.status(200).json({ message: "Missing 'content' param" });
+    return res.status(400).json({ message: "Missing 'content' param" });
   }
 
   try {
@@ -158,6 +158,33 @@ router.post("/content/:path", async (req: Request, res: Response) => {
       .status(200)
       .json({ message: "File has been successfully saved" });
   } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+});
+
+router.patch("/rename/:path", async (req: Request, res: Response) => {
+  if (!req.body.filename) {
+    return res.status(400).json({ message: "Missing 'filename' param" });
+  }
+  console.log(req.params.path)
+  if (!fs.existsSync(req.params.path)) {
+    return res.status(400).json({ message: "Selected path does not exist" });
+  }
+
+  let old_path = req.params.path;
+  let new_path = path.join(path.dirname(req.params.path), req.body.filename);
+
+  if (fs.existsSync(new_path)) {
+    return res.status(409).json({ message: "Path already exists" });
+  }
+
+  try {
+    fs.renameSync(old_path, new_path);
+    return res
+      .status(200)
+      .json({ message: "Path has been successfully renamed" });
+  }
+  catch (error) {
     return res.status(500).json({ message: error });
   }
 });

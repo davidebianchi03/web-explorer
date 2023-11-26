@@ -2,12 +2,15 @@ import React from "react";
 import "./FileExplorer.css";
 import { Component } from "react";
 import return_icon from "../img/return.svg";
-import { DeletePath, DownloadPath, GetChildrenElements, UploadFile } from "../http-requests/http-requests";
+import { DeletePath, DownloadPath, GetChildrenElements, RenamePath, UploadFile } from "../http-requests/http-requests";
 import Swal from "sweetalert2";
 import { ContextMenu } from "../context-menu/context-menu";
 import open_icon from "../img/open.png";
 import download_icon from "../img/download.png";
 import menu_icon from "../img/menu.png";
+import rename_icon from "../img/rename.png";
+import create_file_icon from "../img/create_file.png";
+import create_folder_icon from "../img/create_folder.png";
 import trash_icon from "../img/trash.png";
 import WinBox from 'react-winbox';
 import FileEditor from "../file-editor/file-editor";
@@ -337,13 +340,34 @@ export class FileExplorer extends Component {
       options = [{
         title: "Open",
         icon: open_icon,
-        action: () => { alert("Hello") }
+        action: () => { this.openChild(this.state.selected_items[0]) }
       },]
+        .concat([
+          {
+            title: "Rename",
+            icon: rename_icon,
+            action: () => { this.renameItem(this.state.selected_items[0]) }
+          },
+        ])
         .concat(options)
         .concat([
           {
             title: "Properties",
             icon: menu_icon,
+            action: () => { alert("Hello") }
+          },
+        ])
+        .concat([
+          {
+            title: "Create file",
+            icon: create_file_icon,
+            action: () => { alert("Hello") }
+          },
+        ])
+        .concat([
+          {
+            title: "Create folder",
+            icon: create_folder_icon,
             action: () => { alert("Hello") }
           },
         ]);
@@ -417,5 +441,32 @@ export class FileExplorer extends Component {
     }
 
     this.updateChildrenElements();
+  }
+
+  renameItem = async (row) => {
+    let path = this.path[this.path.length - 1] === "/" ? this.path : this.path + "/";
+    path += row.name;
+    let result = await Swal.fire({
+      title: `Rename ${path}`,
+      text: "Enter the new name",
+      input: 'text',
+      inputValue: row.name,
+      inputPlaceholder: "Filename",
+      showCancelButton: true
+    });
+
+    if (result.isConfirmed) {
+      let new_filename = result.value;
+
+      let response = await RenamePath(path, new_filename);
+      if (response.error) {
+        Swal.fire(
+          "Cannot rename path",
+          response.data.response.data.message ? response.data.response.data.message : response.data.message,
+          "error"
+        );
+      }
+      this.updateChildrenElements();
+    }
   }
 }
