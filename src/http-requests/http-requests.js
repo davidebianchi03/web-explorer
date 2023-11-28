@@ -226,3 +226,20 @@ export async function CreatePath(path, type) {
     };
   }
 }
+
+export async function GetPathProperties(path) {
+  try {
+    let response = await axios.get(GetServerUrl() + `/data/properties/${encodeURIComponent(path)}`);
+    return {
+      error: false,
+      data: response.data,
+      statusCode: response.status,
+    };
+  } catch (error) {
+    return {
+      error: true,
+      data: error,
+      statusCode: error.response.status,
+    };
+  }
+}

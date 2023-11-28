@@ -217,3 +217,37 @@ router.post("/path", async (req: Request, res: Response) => {
     return res.status(500).json({ message: error });
   }
 });
+
+router.get("/properties/:path", async (req: Request, res: Response) => {
+  if (!fs.existsSync(req.params.path)) {
+    res.status(404).json({ message: "Path not found" });
+  }
+
+  let data = {
+    filename: "",
+    path: "",
+    size: 0,
+    permissions: {},
+    creation_date: "",
+    modified_on: ""
+  };
+  try {
+    let file_stats = fs.statSync(req.params.path);
+    data.filename = path.basename(req.params.path);
+    data.path = req.params.path;
+    data.modified_on = file_stats.mtime.toISOString();
+    data.creation_date = file_stats.ctime.toISOString();
+    data.permissions = getPermissions(req.params.path);
+
+    if (!isDirectory(req.params.path)) {
+      data.size = file_stats.size;
+    }
+
+    return res
+      .status(200)
+      .json({ data: data });
+  }
+  catch (error) {
+    return res.status(500).json({ message: error });
+  }
+});

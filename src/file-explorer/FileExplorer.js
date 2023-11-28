@@ -14,6 +14,7 @@ import create_folder_icon from "../img/create_folder.png";
 import trash_icon from "../img/trash.png";
 import WinBox from 'react-winbox';
 import FileEditor from "../file-editor/file-editor";
+import Properties from "../properties/Properties";
 
 export class FileExplorer extends Component {
   constructor(props) {
@@ -340,13 +341,13 @@ export class FileExplorer extends Component {
       options = [{
         title: "Open",
         icon: open_icon,
-        action: () => { this.openChild(this.state.selected_items[0]) }
+        action: () => { this.openChild(this.state.selected_items[0]); }
       },]
         .concat([
           {
             title: "Rename",
             icon: rename_icon,
-            action: () => { this.renameItem(this.state.selected_items[0]) }
+            action: () => { this.renameItem(this.state.selected_items[0]); }
           },
         ])
         .concat(options)
@@ -354,7 +355,7 @@ export class FileExplorer extends Component {
           {
             title: "Properties",
             icon: menu_icon,
-            action: () => { alert("Hello") }
+            action: () => { this.showProperties(this.state.selected_items[0]); }
           },
         ])
         .concat([
@@ -505,9 +506,32 @@ export class FileExplorer extends Component {
           response.data.response.data.message ? response.data.response.data.message : response.data.message,
           "error"
         );
-      }else{
+      } else {
         this.updateChildrenElements();
       }
     }
+  }
+
+  showProperties = async (row) => {
+    let path = this.path[this.path.length - 1] === "/" ? this.path : this.path + "/";
+    path += row.name;
+    let properties = (
+      <WinBox
+        width={250}
+        height={300}
+        x="center"
+        y={100}
+        title={row.name}
+        bottom={0}
+        className='modern front'
+        background="#f56a00"
+        noFull={true}
+        noResize={true}
+        noMax={true}
+      >
+        <Properties path={path} />
+      </WinBox>
+    );
+    this.addWindow(properties);
   }
 }
