@@ -60,7 +60,7 @@ func PathCreate(ctx *gin.Context) {
 	var request_body RequestBody
 
 	if err := ctx.ShouldBindJSON(&request_body); err != nil {
-		ctx.JSON(400, gin.H{"detail": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"detail": err.Error()})
 		return
 	}
 
@@ -77,4 +77,53 @@ func PathCreate(ctx *gin.Context) {
 
 	LocalSetPermissions(LocalJoinPath(path, request_body.Name), request_body.Permissions)
 	ctx.JSON(http.StatusCreated, LocalGetDirectoryChild(LocalJoinPath(path, request_body.Name)))
+}
+
+/**
+* PUT /path/<path>/<child>
+ */
+func PathUpdate(ctx *gin.Context) {
+	type RequestBody struct {
+		Name        string `json:"name"`
+		Parent      string `json:"parent"`
+		Permissions int    `json:"permissions"`
+	}
+
+	path := ctx.Param("path")
+	child := ctx.Param("child")
+
+	if !LocalPathExists(LocalJoinPath(path, child)) {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"detail": "Path not found",
+		})
+		return
+	}
+
+	var request_body RequestBody
+
+	if err := ctx.ShouldBindJSON(&request_body); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"detail": err.Error()})
+		return
+	}
+
+	if request_body.Name == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"detail": "Missing parameter 'name'"})
+		return
+	}
+
+	if request_body.Parent == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"detail": "Missing parameter 'parent'"})
+		return
+	}
+
+	if LocalPathExists(LocalJoinPath(request_body.Parent, request_body.Name)) {
+		ctx.JSON(http.StatusConflict, gin.H{"detail": "New Path alredy exits"})
+		return
+	}
+
+	LocalRenamePath(LocalJoinPath(path, child), LocalJoinPath(request_body.Parent, request_body.Name))
+	LocalSetPermissions(LocalJoinPath(request_body.Parent, request_body.Name), request_body.Permissions)
+	ctx.JSON(http.StatusOK, LocalGetDirectoryChild(LocalJoinPath(request_body.Parent, request_body.Name)))
+
+	return
 }

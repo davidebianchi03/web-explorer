@@ -85,8 +85,8 @@ func LocalGetDirectoryChild(_path string) Child {
 
 	child_obj := Child{
 		Name:              info.Name(),
-		Absolute_path:     filepath.Clean(filepath.Join(_path, info.Name())),
-		Parent:            filepath.Clean(_path),
+		Absolute_path:     filepath.Clean(filepath.Join(filepath.Dir(_path), info.Name())),
+		Parent:            filepath.Clean(filepath.Dir(_path)),
 		Is_directory:      info.IsDir(),
 		Permissions:       int(info.Mode()),
 		Size:              info.Size(),
@@ -126,6 +126,16 @@ func LocalCreateDirectory(_path string) {
  */
 func LocalSetPermissions(_path string, unix_permissions int) {
 	err := os.Chmod(_path, os.FileMode(unix_permissions))
+	if err != nil {
+		panic(err)
+	}
+}
+
+/**
+* Rename a part of the path
+ */
+func LocalRenamePath(old_path string, new_path string) {
+	err := os.Rename(old_path, new_path)
 	if err != nil {
 		panic(err)
 	}
