@@ -11,7 +11,7 @@ type Child struct {
 	Absolute_path     string `json:"absolute_path"`
 	Parent            string `json:"parent"`
 	Is_directory      bool   `json:"is_directory"`
-	Permissions       string `json:"permissions"`
+	Permissions       int    `json:"permissions"`
 	Size              int64  `json:"size"`
 	Modification_time string `json:"modification_time"`
 }
@@ -19,14 +19,14 @@ type Child struct {
 /**
 * Join paths
  */
-func JoinPath(elements ...string) string {
+func LocalJoinPath(elements ...string) string {
 	return filepath.Join(elements...)
 }
 
 /**
 * Get if path exists
  */
-func PathExists(path string) bool {
+func LocalPathExists(path string) bool {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return false
 	} else {
@@ -37,7 +37,7 @@ func PathExists(path string) bool {
 /**
 * Get the list of children elements of directory
  */
-func GetDirectoryChildren(_path string) []Child {
+func LocalGetDirectoryChildren(_path string) []Child {
 	_path = filepath.Clean(_path)
 	dir, err := os.Open(_path)
 	if err != nil {
@@ -63,7 +63,7 @@ func GetDirectoryChildren(_path string) []Child {
 			Absolute_path:     filepath.Clean(filepath.Join(_path, info.Name())),
 			Parent:            filepath.Clean(_path),
 			Is_directory:      info.IsDir(),
-			Permissions:       info.Mode().String(),
+			Permissions:       int(info.Mode()),
 			Size:              info.Size(),
 			Modification_time: info.ModTime().Format(time.RFC3339),
 		}
@@ -75,7 +75,7 @@ func GetDirectoryChildren(_path string) []Child {
 /**
 * Get single child element of a directory
  */
-func GetDirectoryChild(_path string) Child {
+func LocalGetDirectoryChild(_path string) Child {
 	_path = filepath.Clean(_path)
 	info, err := os.Stat(_path)
 	if err != nil {
@@ -88,10 +88,45 @@ func GetDirectoryChild(_path string) Child {
 		Absolute_path:     filepath.Clean(filepath.Join(_path, info.Name())),
 		Parent:            filepath.Clean(_path),
 		Is_directory:      info.IsDir(),
-		Permissions:       info.Mode().String(),
+		Permissions:       int(info.Mode()),
 		Size:              info.Size(),
 		Modification_time: info.ModTime().Format(time.RFC3339),
 	}
 
 	return child_obj
+}
+
+/**
+* Create new blank file
+ */
+func LocalCreateFile(_path string) {
+	file, err := os.Create(_path)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	_, err = file.Write([]byte(""))
+	if err != nil {
+		panic(err)
+	}
+}
+
+/**
+* Create new directory
+ */
+func LocalCreateDirectory(_path string) {
+	err := os.Mkdir(_path, 700)
+	if err != nil {
+		panic(err)
+	}
+}
+
+/**
+* Set permissions of a path (chmod)
+ */
+func LocalSetPermissions(_path string, unix_permissions int) {
+	err := os.Chmod(_path, os.FileMode(unix_permissions))
+	if err != nil {
+		panic(err)
+	}
 }
