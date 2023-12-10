@@ -146,3 +146,31 @@ func PathDelete(ctx *gin.Context) {
 		"detail": "Path has been successfully deleted",
 	})
 }
+
+/**
+* GET /path/<path>/<child>/content
+ */
+func PathGetContent(ctx *gin.Context) {
+	path := ctx.Param("path")
+	child := ctx.Param("child")
+
+	if !LocalPathExists(LocalJoinPath(path, child)) {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"detail": "Path not found",
+		})
+		return
+	}
+
+	if LocalIsDirectory(LocalJoinPath(path, child)) {
+		ctx.JSON(http.StatusNotAcceptable, gin.H{
+			"detail": "Selected path is not a file",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"content": LocalReadFile(LocalJoinPath(path, child)),
+	})
+	return
+
+}

@@ -150,3 +150,31 @@ func LocalDeletePath(path string) {
 		panic(err)
 	}
 }
+
+/**
+* Get if path is a directory
+ */
+func LocalIsDirectory(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		panic(err)
+	}
+
+	if info.IsDir() {
+		return true
+	} else {
+		return false
+	}
+}
+
+/**
+* Read the content of a file
+ */
+func LocalReadFile(path string) string {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(content)
+}
