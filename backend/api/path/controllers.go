@@ -172,5 +172,44 @@ func PathGetContent(ctx *gin.Context) {
 		"content": LocalReadFile(LocalJoinPath(path, child)),
 	})
 	return
+}
 
+/**
+* PUT /path/<path>/<child>/content
+ */
+func PathPutContent(ctx *gin.Context) {
+	type RequestBody struct {
+		Content string `json:"content"`
+	}
+
+	path := ctx.Param("path")
+	child := ctx.Param("child")
+
+	if !LocalPathExists(LocalJoinPath(path, child)) {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"detail": "Path not found",
+		})
+		return
+	}
+
+	if LocalIsDirectory(LocalJoinPath(path, child)) {
+		ctx.JSON(http.StatusNotAcceptable, gin.H{
+			"detail": "Selected path is not a file",
+		})
+		return
+	}
+
+	var request_body RequestBody
+
+	if err := ctx.ShouldBindJSON(&request_body); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"detail": err.Error()})
+		return
+	}
+
+	LocalWriteFile(LocalJoinPath(path, child), request_body.Content)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"detail": request_body.Content,
+	})
+	return
 }

@@ -178,3 +178,19 @@ func LocalReadFile(path string) string {
 
 	return string(content)
 }
+
+/**
+* Write the content of a file
+ */
+func LocalWriteFile(path string, content string) {
+	info, err := os.Stat(path)
+	if err != nil {
+		// internal server error
+		panic(err)
+	}
+	err = os.WriteFile(path, []byte(content), info.Mode())
+	if err != nil {
+		// internal server error
+		panic(err)
+	}
+}
