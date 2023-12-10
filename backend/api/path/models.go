@@ -140,3 +140,13 @@ func LocalRenamePath(old_path string, new_path string) {
 		panic(err)
 	}
 }
+
+/**
+* Delete file of directory
+ */
+func LocalDeletePath(path string) {
+	err := os.RemoveAll(path)
+	if err != nil {
+		panic(err)
+	}
+}

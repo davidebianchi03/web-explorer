@@ -127,3 +127,22 @@ func PathUpdate(ctx *gin.Context) {
 
 	return
 }
+
+/**
+* DELETE /path/<path>/<child>
+ */
+func PathDelete(ctx *gin.Context) {
+	path := ctx.Param("path")
+	child := ctx.Param("child")
+
+	if !LocalPathExists(LocalJoinPath(path, child)) {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"detail": "Path not found",
+		})
+		return
+	}
+	LocalDeletePath(LocalJoinPath(path, child))
+	ctx.JSON(http.StatusOK, gin.H{
+		"detail": "Path has been successfully deleted",
+	})
+}

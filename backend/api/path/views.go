@@ -8,4 +8,5 @@ func Routes(route *gin.Engine) {
 	path.GET("/:path/:child", PathRetrieve)
 	path.POST("/:path", PathCreate)
 	path.PUT("/:path/:child", PathUpdate)
+	path.DELETE("/:path/:child", PathDelete)
 }
