@@ -213,3 +213,24 @@ func PathPutContent(ctx *gin.Context) {
 	})
 	return
 }
+
+/**
+* GET /path/<path>/<child>/download
+ */
+func PathDownload(ctx *gin.Context) {
+	path := ctx.Param("path")
+	child := ctx.Param("child")
+
+	if !LocalPathExists(LocalJoinPath(path, child)) {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"detail": "Path not found",
+		})
+		return
+	}
+
+	if LocalIsDirectory(LocalJoinPath(path, child)) {
+		LocalPathTarGzToStream(LocalJoinPath(path, child), ctx)
+	} else {
+		LocalWriteFileToStream(LocalJoinPath(path, child), ctx)
+	}
+}

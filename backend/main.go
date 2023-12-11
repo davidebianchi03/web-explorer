@@ -7,12 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+func setupRouter() *gin.Engine {
 	router := gin.Default()
 
 	// register views
 	path.Routes(router)
+	return router
+}
 
-	router.Run() // listen and serve on 0.0.0.0:8080
+func main() {
+	router := setupRouter()
+
+	router.Run(":8080") // listen and serve on 0.0.0.0:8080
 	fmt.Println("Server listening at 0.0.0.0:8080")
 }

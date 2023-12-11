@@ -1,9 +1,16 @@
 package path
 
 import (
+	"archive/tar"
+	"compress/gzip"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Child struct {
@@ -60,8 +67,8 @@ func LocalGetDirectoryChildren(_path string) []Child {
 		}
 		child_obj := Child{
 			Name:              info.Name(),
-			Absolute_path:     filepath.Clean(filepath.Join(_path, info.Name())),
-			Parent:            filepath.Clean(_path),
+			Absolute_path:     strings.ReplaceAll(filepath.Clean(filepath.Join(filepath.Dir(_path), info.Name())), "\\", "/"),
+			Parent:            strings.ReplaceAll(filepath.Clean(_path), "\\", "/"),
 			Is_directory:      info.IsDir(),
 			Permissions:       int(info.Mode()),
 			Size:              info.Size(),
@@ -85,8 +92,8 @@ func LocalGetDirectoryChild(_path string) Child {
 
 	child_obj := Child{
 		Name:              info.Name(),
-		Absolute_path:     filepath.Clean(filepath.Join(filepath.Dir(_path), info.Name())),
-		Parent:            filepath.Clean(filepath.Dir(_path)),
+		Absolute_path:     strings.ReplaceAll(filepath.Clean(filepath.Join(filepath.Dir(_path), info.Name())), "\\", "/"),
+		Parent:            strings.ReplaceAll(filepath.Clean(filepath.Dir(_path)), "\\", "/"),
 		Is_directory:      info.IsDir(),
 		Permissions:       int(info.Mode()),
 		Size:              info.Size(),
@@ -193,4 +200,89 @@ func LocalWriteFile(path string, content string) {
 		// internal server error
 		panic(err)
 	}
+}
+
+/**
+* Writes the content of a file into another stream
+ */
+func LocalWriteFileToStream(path string, context *gin.Context) {
+	file, err := os.Open(path)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	_, err = io.Copy(context.Writer, file)
+	if err != nil {
+		panic(err)
+	}
+}
+
+/**
+* Creates a tar.gz archive of a folder and send it back to a user
+ */
+func LocalPathTarGzToStream(path string, context *gin.Context) {
+	tarGzFile, err := os.CreateTemp("", fmt.Sprintf("%s.tar.gz", filepath.Base(path)))
+	if err != nil {
+		panic(err)
+	}
+	defer tarGzFile.Close()
+
+	gw := gzip.NewWriter(tarGzFile)
+	defer gw.Close()
+
+	tw := tar.NewWriter(gw)
+	defer tw.Close()
+
+	err = filepath.Walk(path, func(filePath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		relative_path, err := filepath.Rel(path, filePath)
+		if err != nil {
+			return err
+		}
+
+		header, err := tar.FileInfoHeader(info, "")
+		if err != nil {
+			return err
+		}
+
+		header.Name = strings.ReplaceAll(relative_path, "\\", "/")
+
+		if err := tw.WriteHeader(header); err != nil {
+			return err
+		}
+
+		if !info.IsDir() {
+			file, err := os.Open(filePath)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			if _, err := io.Copy(tw, file); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		panic(err)
+	}
+	if err := tw.Close(); err != nil {
+		panic(err)
+	}
+
+	if err := gw.Close(); err != nil {
+		panic(err)
+	}
+
+	defer os.Remove(tarGzFile.Name())
+	context.File(tarGzFile.Name())
+
+	context.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s.tar.gz", filepath.Base(path)))
+	context.Header("Content-Type", "application/gzip")
 }
