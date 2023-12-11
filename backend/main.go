@@ -10,6 +10,9 @@ import (
 func setupRouter() *gin.Engine {
 	router := gin.Default()
 
+	// use middlewares
+	router.Use(panicRecoveryMiddleware)
+
 	// register views
 	path.Routes(router)
 	return router
