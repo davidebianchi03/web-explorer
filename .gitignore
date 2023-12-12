@@ -21,3 +21,4 @@
 go.work
 
 backend/testtmp
+__debug*

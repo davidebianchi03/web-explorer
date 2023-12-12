@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"web-explorer/backend/api/path"
+	"web-explorer/backend/api"
 	"web-explorer/backend/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,7 @@ func SetupRouter() *gin.Engine {
 	router.Use(middleware.PanicRecoveryMiddleware)
 
 	// register views
-	path.Routes(router)
+	api.Routes(router)
 	return router
 }
 

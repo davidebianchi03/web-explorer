@@ -1,4 +1,4 @@
-package path
+package api
 
 import (
 	"net/http"
@@ -6,29 +6,36 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func Routes(route *gin.Engine) {
+	path := route.Group("/path")
+	path.GET("/*path", PathList)
+	path.POST("/*path", PathCreate)
+	path.PUT("/*path", PathUpdate)
+	path.DELETE("/*path", PathDelete)
+
+	content := route.Group("/content")
+	content.GET("/*path", PathGetContent)
+	content.PUT("/*path", PathPutContent)
+
+	download := route.Group("/download")
+	download.GET("/*path", PathDownload)
+}
+
 /**
 * GET /path/<path>
  */
 func PathList(ctx *gin.Context) {
 	path := ctx.Param("path")
-	if LocalPathExists(path) {
-		ctx.JSON(http.StatusOK, LocalGetDirectoryChildren(path))
-	} else {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"detail": "Path not found",
-		})
-		return
-	}
-}
 
-/**
-* GET /path/<path>/<child>
- */
-func PathRetrieve(ctx *gin.Context) {
-	path := ctx.Param("path")
-	child := ctx.Param("child")
-	if LocalPathExists(LocalJoinPath(path, child)) {
-		ctx.JSON(http.StatusOK, LocalGetDirectoryChild(LocalJoinPath(path, child)))
+	if LocalPathExists(path) {
+		if LocalIsDirectory(path) {
+			ctx.JSON(http.StatusOK, LocalGetDirectoryChildren(path))
+		} else {
+			ctx.JSON(http.StatusNotAcceptable, gin.H{
+				"detail": "Selected path is not a folder",
+			})
+			return
+		}
 	} else {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"detail": "Path not found",
@@ -133,15 +140,14 @@ func PathUpdate(ctx *gin.Context) {
  */
 func PathDelete(ctx *gin.Context) {
 	path := ctx.Param("path")
-	child := ctx.Param("child")
 
-	if !LocalPathExists(LocalJoinPath(path, child)) {
+	if !LocalPathExists(path) {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"detail": "Path not found",
 		})
 		return
 	}
-	LocalDeletePath(LocalJoinPath(path, child))
+	LocalDeletePath(path)
 	ctx.JSON(http.StatusOK, gin.H{
 		"detail": "Path has been successfully deleted",
 	})
@@ -152,16 +158,15 @@ func PathDelete(ctx *gin.Context) {
  */
 func PathGetContent(ctx *gin.Context) {
 	path := ctx.Param("path")
-	child := ctx.Param("child")
 
-	if !LocalPathExists(LocalJoinPath(path, child)) {
+	if !LocalPathExists(path) {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"detail": "Path not found",
 		})
 		return
 	}
 
-	if LocalIsDirectory(LocalJoinPath(path, child)) {
+	if LocalIsDirectory(path) {
 		ctx.JSON(http.StatusNotAcceptable, gin.H{
 			"detail": "Selected path is not a file",
 		})
@@ -169,7 +174,7 @@ func PathGetContent(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"content": LocalReadFile(LocalJoinPath(path, child)),
+		"content": LocalReadFile(path),
 	})
 	return
 }
@@ -183,16 +188,15 @@ func PathPutContent(ctx *gin.Context) {
 	}
 
 	path := ctx.Param("path")
-	child := ctx.Param("child")
 
-	if !LocalPathExists(LocalJoinPath(path, child)) {
+	if !LocalPathExists(path) {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"detail": "Path not found",
 		})
 		return
 	}
 
-	if LocalIsDirectory(LocalJoinPath(path, child)) {
+	if LocalIsDirectory(path) {
 		ctx.JSON(http.StatusNotAcceptable, gin.H{
 			"detail": "Selected path is not a file",
 		})
@@ -206,7 +210,7 @@ func PathPutContent(ctx *gin.Context) {
 		return
 	}
 
-	LocalWriteFile(LocalJoinPath(path, child), request_body.Content)
+	LocalWriteFile(path, request_body.Content)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"detail": request_body.Content,
@@ -219,18 +223,17 @@ func PathPutContent(ctx *gin.Context) {
  */
 func PathDownload(ctx *gin.Context) {
 	path := ctx.Param("path")
-	child := ctx.Param("child")
 
-	if !LocalPathExists(LocalJoinPath(path, child)) {
+	if !LocalPathExists(path) {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"detail": "Path not found",
 		})
 		return
 	}
 
-	if LocalIsDirectory(LocalJoinPath(path, child)) {
-		LocalPathTarGzToStream(LocalJoinPath(path, child), ctx)
+	if LocalIsDirectory(path) {
+		LocalPathTarGzToStream(path, ctx)
 	} else {
-		LocalWriteFileToStream(LocalJoinPath(path, child), ctx)
+		LocalWriteFileToStream(path, ctx)
 	}
 }
