@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -55,12 +56,14 @@ func LocalGetDirectoryChildren(_path string) []Child {
 			// internal server error
 			panic(err)
 		}
+		decimal_permissions := int(info.Mode().Perm())
+
 		child_obj := Child{
 			Name:              info.Name(),
-			Absolute_path:     strings.ReplaceAll(filepath.Clean(filepath.Join(filepath.Dir(_path), info.Name())), "\\", "/"),
+			Absolute_path:     strings.ReplaceAll(filepath.Clean(filepath.Join(_path, info.Name())), "\\", "/"),
 			Parent:            strings.ReplaceAll(filepath.Clean(_path), "\\", "/"),
 			Is_directory:      info.IsDir(),
-			Permissions:       int(info.Mode()),
+			Permissions:       strconv.FormatInt(int64(decimal_permissions), 8),
 			Size:              info.Size(),
 			Modification_time: info.ModTime().Format(time.RFC3339),
 		}
@@ -79,13 +82,13 @@ func LocalGetDirectoryChild(_path string) Child {
 		// internal server error
 		panic(err)
 	}
-
+	decimal_permissions := int(info.Mode().Perm())
 	child_obj := Child{
 		Name:              info.Name(),
 		Absolute_path:     strings.ReplaceAll(filepath.Clean(filepath.Join(filepath.Dir(_path), info.Name())), "\\", "/"),
 		Parent:            strings.ReplaceAll(filepath.Clean(filepath.Dir(_path)), "\\", "/"),
 		Is_directory:      info.IsDir(),
-		Permissions:       int(info.Mode()),
+		Permissions:       strconv.FormatInt(int64(decimal_permissions), 8),
 		Size:              info.Size(),
 		Modification_time: info.ModTime().Format(time.RFC3339),
 	}
@@ -112,7 +115,7 @@ func LocalCreateFile(_path string) {
 * Create new directory
  */
 func LocalCreateDirectory(_path string) {
-	err := os.Mkdir(_path, 700)
+	err := os.Mkdir(_path, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
@@ -121,8 +124,12 @@ func LocalCreateDirectory(_path string) {
 /**
 * Set permissions of a path (chmod)
  */
-func LocalSetPermissions(_path string, unix_permissions int) {
-	err := os.Chmod(_path, os.FileMode(unix_permissions))
+func LocalSetPermissions(_path string, unix_permissions string) {
+	permissions, err := strconv.ParseInt(unix_permissions, 8, 32)
+	if err != nil {
+		panic(err)
+	}
+	err = os.Chmod(_path, os.FileMode(permissions))
 	if err != nil {
 		panic(err)
 	}

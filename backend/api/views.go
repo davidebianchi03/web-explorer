@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,10 +53,11 @@ func PathCreate(ctx *gin.Context) {
 	type RequestBody struct {
 		Name         string `json:"name"`
 		Is_directory bool   `json:"is_directory"`
-		Permissions  int    `json:"permissions"`
+		Permissions  string `json:"permissions"`
 	}
 
 	path := ctx.Param("path")
+	path = filepath.Clean(path)
 
 	if !LocalPathExists(path) {
 		ctx.JSON(http.StatusNotFound, gin.H{
@@ -93,7 +95,7 @@ func PathUpdate(ctx *gin.Context) {
 	type RequestBody struct {
 		Name        string `json:"name"`
 		Parent      string `json:"parent"`
-		Permissions int    `json:"permissions"`
+		Permissions string `json:"permissions"`
 	}
 
 	path := ctx.Param("path")
