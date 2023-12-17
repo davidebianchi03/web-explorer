@@ -20,5 +20,5 @@
 # Go workspace file
 go.work
 
-backend/testtmp
+backend/**/test-tmp
 __debug*

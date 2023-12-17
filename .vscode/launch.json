@@ -11,13 +11,5 @@
             "mode": "auto",
             "program": "backend"
         },
-        {
-            "name": "Backend tests",
-            "type": "go",
-            "request": "launch",
-            "mode": "test",
-            "program": "backend",
-            "args": ["test", "-v", "./..."],
-        },
     ]
 }

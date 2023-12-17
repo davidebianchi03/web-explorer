@@ -7,21 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Routes(route *gin.Engine) {
-	path := route.Group("/path")
-	path.GET("/*path", PathList)
-	path.POST("/*path", PathCreate)
-	path.PUT("/*path", PathUpdate)
-	path.DELETE("/*path", PathDelete)
-
-	content := route.Group("/content")
-	content.GET("/*path", PathGetContent)
-	content.PUT("/*path", PathPutContent)
-
-	download := route.Group("/download")
-	download.GET("/*path", PathDownload)
-}
-
 /**
 * GET /path/<path>
  */
@@ -89,7 +74,7 @@ func PathCreate(ctx *gin.Context) {
 }
 
 /**
-* PUT /path/<path>/<child>
+* PUT /path/<path>
  */
 func PathUpdate(ctx *gin.Context) {
 	type RequestBody struct {
@@ -125,7 +110,7 @@ func PathUpdate(ctx *gin.Context) {
 		return
 	}
 
-	if LocalPathExists(LocalJoinPath(request_body.Parent, request_body.Name)) {
+	if path == LocalJoinPath(request_body.Parent, request_body.Name) && LocalPathExists(LocalJoinPath(request_body.Parent, request_body.Name)) {
 		ctx.JSON(http.StatusConflict, gin.H{"detail": "New Path alredy exits"})
 		return
 	}
@@ -133,12 +118,10 @@ func PathUpdate(ctx *gin.Context) {
 	LocalRenamePath(LocalJoinPath(path, child), LocalJoinPath(request_body.Parent, request_body.Name))
 	LocalSetPermissions(LocalJoinPath(request_body.Parent, request_body.Name), request_body.Permissions)
 	ctx.JSON(http.StatusOK, LocalGetDirectoryChild(LocalJoinPath(request_body.Parent, request_body.Name)))
-
-	return
 }
 
 /**
-* DELETE /path/<path>/<child>
+* DELETE /path/<path>
  */
 func PathDelete(ctx *gin.Context) {
 	path := ctx.Param("path")
@@ -153,89 +136,4 @@ func PathDelete(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"detail": "Path has been successfully deleted",
 	})
-}
-
-/**
-* GET /path/<path>/<child>/content
- */
-func PathGetContent(ctx *gin.Context) {
-	path := ctx.Param("path")
-
-	if !LocalPathExists(path) {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"detail": "Path not found",
-		})
-		return
-	}
-
-	if LocalIsDirectory(path) {
-		ctx.JSON(http.StatusNotAcceptable, gin.H{
-			"detail": "Selected path is not a file",
-		})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"content": LocalReadFile(path),
-	})
-	return
-}
-
-/**
-* PUT /path/<path>/<child>/content
- */
-func PathPutContent(ctx *gin.Context) {
-	type RequestBody struct {
-		Content string `json:"content"`
-	}
-
-	path := ctx.Param("path")
-
-	if !LocalPathExists(path) {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"detail": "Path not found",
-		})
-		return
-	}
-
-	if LocalIsDirectory(path) {
-		ctx.JSON(http.StatusNotAcceptable, gin.H{
-			"detail": "Selected path is not a file",
-		})
-		return
-	}
-
-	var request_body RequestBody
-
-	if err := ctx.ShouldBindJSON(&request_body); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"detail": err.Error()})
-		return
-	}
-
-	LocalWriteFile(path, request_body.Content)
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"detail": request_body.Content,
-	})
-	return
-}
-
-/**
-* GET /path/<path>/<child>/download
- */
-func PathDownload(ctx *gin.Context) {
-	path := ctx.Param("path")
-
-	if !LocalPathExists(path) {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"detail": "Path not found",
-		})
-		return
-	}
-
-	if LocalIsDirectory(path) {
-		LocalPathTarGzToStream(path, ctx)
-	} else {
-		LocalWriteFileToStream(path, ctx)
-	}
 }
