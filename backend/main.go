@@ -3,11 +3,16 @@ package main
 import (
 	"fmt"
 	"web-explorer/backend/api"
-	"web-explorer/backend/controller"
+	"web-explorer/backend/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := controller.SetupRouter()
+	router := gin.Default()
+
+	// use middlewares
+	router.Use(middleware.PanicRecoveryMiddleware)
 	// register views
 	api.Routes(router)
 
