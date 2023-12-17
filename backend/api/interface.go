@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -212,6 +213,7 @@ func LocalWriteFileToStream(path string, context *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
+	context.Status(http.StatusOK)
 }
 
 /**
@@ -282,4 +284,5 @@ func LocalPathTarGzToStream(path string, context *gin.Context) {
 
 	context.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s.tar.gz", filepath.Base(path)))
 	context.Header("Content-Type", "application/gzip")
+	context.Status(http.StatusOK)
 }
