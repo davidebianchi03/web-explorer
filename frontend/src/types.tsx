@@ -1,11 +1,12 @@
 export type ChildItem = {
-    key: number,
+    // key: number,
     name: string,
-    is_folder: boolean,
-    abs_path: string,
+    is_directory: boolean,
+    absolute_path: string,
     parent: string,
-    permissions: number,
-    modified_on: Date,
+    permissions: string,
+    modification_time: string,
+    size: number,
     editable: boolean,
     children: ChildItem[]
 }

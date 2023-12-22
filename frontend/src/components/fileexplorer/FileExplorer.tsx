@@ -6,12 +6,15 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { ChildItem } from "../../types";
 import folder_icon from "../../icons/folder.png";
 import file_icon from "../../icons/file.png";
+import { Requests } from "./Requests";
+import { PadWithZero } from "../../utils";
 
 type FileExplorerProps = {
     initialPath: string;
 }
 
 type FileExplorerState = {
+    folder_name: string,
     children: ChildItem[]
 }
 
@@ -58,24 +61,30 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
         super(props);
         this.current_path = props.initialPath;
         this.state = {
-            children: [
-                {
-                    key: 1,
-                    is_folder: false,
-                    abs_path: "",
-                    name: "item1",
-                    modified_on: new Date(Date.now()),
-                    parent: "",
-                    permissions: 777,
-                    editable: false,
-                    children: []
-                }
-            ]
+            folder_name: "/",
+            children: []
         }
     }
 
     componentDidMount(): void {
-
+        (async () => {
+            var response = await Requests.GetChildren("/");
+            if (response.success) {
+                var data = response.json_content as ChildItem[];
+                data = data.map((child) => (
+                    {
+                        ...child,
+                        editable: false,
+                        children: []
+                    }
+                ));
+                this.setState({
+                    children: data
+                });
+            } else {
+                // TODO: print error
+            }
+        })();
     }
 
     render(): React.ReactNode {
@@ -97,9 +106,9 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                     <div className="tree">
                         <ul>
                             <li className="dropdown-element">
-                                <FontAwesomeIcon icon={faCaretDown} className="dropdown"/>
-                                <img src={folder_icon} className="type"/>
-                                <span className="name">Folder Name</span>
+                                <FontAwesomeIcon icon={faCaretDown} className="dropdown" />
+                                <img src={folder_icon} className="type" />
+                                <span className="name">{this.state.folder_name}</span>
                                 {/* <ul>
                                     <li>
                                         <span>Child 1</span>
@@ -111,7 +120,7 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                     <div className="files">
                         <div className="row header">
                             <div className="type">
-                                <img src={folder_icon} width={25} height={25} alt="type"/>
+                                <img src={folder_icon} width={25} height={25} alt="type" />
                             </div>
                             <div className="name">
                                 <span>Name</span>
@@ -126,13 +135,20 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                         {this.state.children.map(child => (
                             <div className="row">
                                 <div className="type">
-                                    <img src={child.is_folder ? folder_icon : file_icon} width={25} height={25} alt="type"/>
+                                    <img src={child.is_directory ? folder_icon : file_icon} width={25} height={25} alt="type" />
                                 </div>
                                 <div className="name">
                                     <span>{child.name}</span>
                                 </div>
                                 <div className="modified">
-                                    <span>{`${child.modified_on.toLocaleDateString()} ${child.modified_on.getHours()}:${child.modified_on.getMinutes()}`}</span>
+                                    <span>
+                                        {
+                                            `
+                                            ${new Date(child.modification_time).toLocaleDateString()} 
+                                            ${PadWithZero(new Date(child.modification_time).getHours())}:${PadWithZero(new Date(child.modification_time).getMinutes())}
+                                        `
+                                        }
+                                    </span>
                                 </div>
                                 <div className="permissions">
                                     <span>{child.permissions}</span>

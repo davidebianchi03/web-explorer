@@ -13,6 +13,7 @@ func main() {
 
 	// use middlewares
 	router.Use(middleware.PanicRecoveryMiddleware)
+	router.Use(middleware.CORSMiddleware)
 	// register views
 	api.Routes(router)
 
