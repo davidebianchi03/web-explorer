@@ -7,3 +7,9 @@ export function PadWithZero(number:number):string{
     }
     return number_str;
 }
+
+export function FixPath(path:string):string{
+    if(path !== "")
+        return path[path.length-1] === "/" ? path : (path + "/");
+    return "/";
+}

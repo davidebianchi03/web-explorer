@@ -76,26 +76,36 @@
 .file-explorer .explorer .tree ul{
     padding: 0px;
     padding-left: 10px;
+    list-style: none;
 }
 
 .file-explorer .explorer .tree .dropdown-element {
+    /* display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    user-select: none; */
+    padding-left: 10px;
+}
+
+.file-explorer .explorer .tree .dropdown-element .dropdown-header {
     display: flex;
     align-items: center;
     padding: 0;
     user-select: none;
 }
 
-.file-explorer .explorer .tree .dropdown-element .dropdown {
+.file-explorer .explorer .tree .dropdown-element .dropdown-header .dropdown {
    font-size: 15px;
 }
 
-.file-explorer .explorer .tree .dropdown-element .type {
+.file-explorer .explorer .tree .dropdown-element .dropdown-header .type {
     width: 25px;
     height: 25px;
     margin: 0px 5px;
 }
 
-.file-explorer .explorer .tree .dropdown-element .name {
+.file-explorer .explorer .tree .dropdown-element .dropdown-header .name {
     width: 100%;
     margin: 0px 5px;
     font-size: 14px;

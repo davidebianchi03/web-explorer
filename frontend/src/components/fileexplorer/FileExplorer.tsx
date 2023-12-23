@@ -7,7 +7,7 @@ import { ChildItem } from "../../types";
 import folder_icon from "../../icons/folder.png";
 import file_icon from "../../icons/file.png";
 import { Requests } from "./Requests";
-import { PadWithZero } from "../../utils";
+import { FixPath, PadWithZero } from "../../utils";
 
 type FileExplorerProps = {
     initialPath: string;
@@ -67,25 +67,37 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
     }
 
     componentDidMount(): void {
-        (async () => {
-            var response = await Requests.GetChildren("/");
-            if (response.success) {
-                var data = response.json_content as ChildItem[];
-                data = data.map((child) => (
-                    {
-                        ...child,
-                        editable: false,
-                        children: []
-                    }
-                ));
-                this.setState({
-                    children: data
-                });
-            } else {
-                // TODO: print error
-            }
-        })();
+        this.loadChildren();
     }
+
+    loadChildren = async () => {
+        var response = await Requests.GetChildren(this.current_path);
+        if (response.success) {
+            var data = response.json_content as ChildItem[];
+            data = data.map((child) => (
+                {
+                    ...child,
+                    editable: false,
+                    children: []
+                }
+            ));
+            this.setState({
+                children: data
+            });
+        } else {
+            // TODO: print error
+        }
+    }
+
+    openChildItem = async (element: ChildItem) => {
+        if (element.is_directory) {
+            this.current_path = FixPath(element.absolute_path);
+            this.loadChildren();
+        } else {
+            // TODO: open file
+        }
+    }
+
 
     render(): React.ReactNode {
         return (
@@ -106,14 +118,14 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                     <div className="tree">
                         <ul>
                             <li className="dropdown-element">
-                                <FontAwesomeIcon icon={faCaretDown} className="dropdown" />
-                                <img src={folder_icon} className="type" />
-                                <span className="name">{this.state.folder_name}</span>
-                                {/* <ul>
-                                    <li>
-                                        <span>Child 1</span>
-                                    </li>
-                                </ul> */}
+                                <span className="dropdown-header">
+                                    <FontAwesomeIcon icon={faCaretDown} className="dropdown" />
+                                    <img src={folder_icon} className="type" />
+                                    <span className="name">{this.state.folder_name}</span>
+                                </span>
+                                <ul>
+
+                                </ul>
                             </li>
                         </ul>
                     </div>
@@ -133,7 +145,7 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                             </div>
                         </div>
                         {this.state.children.map(child => (
-                            <div className="row">
+                            <div className="row" onDoubleClick={() => this.openChildItem(child)}>
                                 <div className="type">
                                     <img src={child.is_directory ? folder_icon : file_icon} width={25} height={25} alt="type" />
                                 </div>
