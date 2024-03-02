@@ -1,13 +1,14 @@
 import React from "react";
 import "./styles/FileExplorer.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFolderPlus, faFileCirclePlus, faUpload, faRotate, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
+import { faFolderPlus, faFileCirclePlus, faUpload, faRotate, faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { ChildItem } from "../../types";
 import folder_icon from "../../icons/folder.png";
 import file_icon from "../../icons/file.png";
 import { Requests } from "./Requests";
 import { FixPath, PadWithZero } from "../../utils";
+import Swal from 'sweetalert2'
 
 type FileExplorerProps = {
     initialPath: string;
@@ -33,7 +34,28 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
             key: 1,
             title: "New Folder",
             icon: faFolderPlus,
-            callback: () => { }
+            callback: async() => { 
+                var swal_result = await Swal.fire({
+                    title: "Create new folder",
+                    input: "text",
+                    inputAttributes: {
+                        placeholder: "Folder name"
+                    }
+                });
+
+                if(swal_result.isConfirmed){
+                    var response = await Requests.CreatePath(this.current_path, swal_result.value, true, 700);
+                    if(!response.success){
+                        Swal.fire({
+                            icon:"error",
+                            title:"Cannot create folder",
+                            text: `${response.status_code} - ${response.description}`
+                        })
+                    } else {
+                        this.loadChildren();
+                    }
+                }
+            }
         },
         {
             key: 1,
@@ -120,7 +142,7 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                             <li className="dropdown-element">
                                 <span className="dropdown-header">
                                     <FontAwesomeIcon icon={faCaretDown} className="dropdown" />
-                                    <img src={folder_icon} className="type" />
+                                    <img src={folder_icon} className="type" alt=""/>
                                     <span className="name">{this.state.folder_name}</span>
                                 </span>
                                 <ul>

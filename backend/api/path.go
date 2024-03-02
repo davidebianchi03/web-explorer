@@ -52,7 +52,6 @@ func PathCreate(ctx *gin.Context) {
 	}
 
 	var request_body RequestBody
-
 	if err := ctx.ShouldBindJSON(&request_body); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"detail": err.Error()})
 		return
