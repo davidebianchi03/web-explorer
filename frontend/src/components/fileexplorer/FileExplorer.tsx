@@ -57,10 +57,12 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
     ]
 
     current_path: string;
+    filter_text: string;
 
     constructor(props: FileExplorerProps) {
         super(props);
         this.current_path = props.initialPath;
+        this.filter_text = "";
         this.state = {
             folder_name: "/",
             children: []
@@ -75,7 +77,12 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
         var response = await Requests.GetChildren(this.current_path);
         if (response.success) {
             var data = response.json_content as ChildItem[];
-            data = data.map((child) => (
+            data = data.filter((child: ChildItem) => {
+                if (child.name.indexOf(this.filter_text) !== -1) {
+                    return true;
+                }
+                return false;
+            }).map((child) => (
                 {
                     ...child,
                     editable: false,
@@ -99,7 +106,7 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
         }
     }
 
-    createFolder = async (folder_initial_name: string|null) => {
+    createFolder = async (folder_initial_name: string | null) => {
         var swal_result = await Swal.fire({
             title: "Create new folder",
             input: "text",
@@ -142,7 +149,7 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
         }
     }
 
-    createFile = async(file_initial_name: string|null) => {
+    createFile = async (file_initial_name: string | null) => {
         var swal_result = await Swal.fire({
             title: "Create new file",
             input: "text",
@@ -198,7 +205,14 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                 </div>
                 <div className="search-bar">
                     <span>Files</span>
-                    <input placeholder="Search Files" />
+                    <input placeholder="Search Files" onKeyDown={(e: any) => {
+                        var event = e as KeyboardEvent;
+                        if (event.key.toLowerCase() === "enter") {
+                            this.filter_text = (event.target as HTMLInputElement).value;
+                            this.loadChildren();
+                            event.preventDefault();
+                        }
+                    }} />
                 </div>
                 <div className="explorer">
                     <div className="tree">

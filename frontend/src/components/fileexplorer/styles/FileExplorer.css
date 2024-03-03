@@ -125,6 +125,11 @@
     user-select: none;
 }
 
+.file-explorer .explorer .files .row:hover {
+    background-color: #f3f3f3;
+    cursor: pointer;
+}
+
 .file-explorer .explorer .files .row.header {
     background-color: #f1f1f1;
     border-top: solid #cacaca 1.5px;
