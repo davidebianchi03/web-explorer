@@ -34,34 +34,13 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
             key: 1,
             title: "New Folder",
             icon: faFolderPlus,
-            callback: async() => { 
-                var swal_result = await Swal.fire({
-                    title: "Create new folder",
-                    input: "text",
-                    inputAttributes: {
-                        placeholder: "Folder name"
-                    }
-                });
-
-                if(swal_result.isConfirmed){
-                    var response = await Requests.CreatePath(this.current_path, swal_result.value, true, 700);
-                    if(!response.success){
-                        Swal.fire({
-                            icon:"error",
-                            title:"Cannot create folder",
-                            text: `${response.status_code} - ${response.description}`
-                        })
-                    } else {
-                        this.loadChildren();
-                    }
-                }
-            }
+            callback: () => this.createFolder(""),
         },
         {
             key: 1,
             title: "New File",
             icon: faFileCirclePlus,
-            callback: () => { }
+            callback: () => this.createFile(""),
         },
         {
             key: 2,
@@ -73,7 +52,7 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
             key: 3,
             title: "Refresh",
             icon: faRotate,
-            callback: () => { }
+            callback: () => this.loadChildren(),
         }
     ]
 
@@ -120,6 +99,91 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
         }
     }
 
+    createFolder = async (folder_initial_name: string|null) => {
+        var swal_result = await Swal.fire({
+            title: "Create new folder",
+            input: "text",
+            inputValue: folder_initial_name ? folder_initial_name : "",
+            inputAttributes: {
+                placeholder: "Folder name"
+            }
+        });
+
+        if (swal_result.isConfirmed) {
+            var response = await Requests.CreatePath(this.current_path, swal_result.value, true, 700);
+            if (response.success) {
+                this.loadChildren();
+            }
+            else if (response.status_code === 404) {
+                // parent path not found
+                await Swal.fire({
+                    icon: "error",
+                    title: "Parent folder not found!",
+                    text: `Path ${this.current_path} does not exist!`
+                });
+                console.log(this.current_path)
+            }
+            else if (response.status_code === 409) {
+                // folder already exists
+                await Swal.fire({
+                    icon: "error",
+                    title: "Item already exists!",
+                    text: `Item with name ${swal_result.value} alredy exists!`
+                });
+                this.createFolder(swal_result.value);
+            }
+            else {
+                await Swal.fire({
+                    icon: "error",
+                    title: "Cannot create folder",
+                    text: `Unknown error ${response.status_code}`
+                });
+            }
+        }
+    }
+
+    createFile = async(file_initial_name: string|null) => {
+        var swal_result = await Swal.fire({
+            title: "Create new file",
+            input: "text",
+            inputValue: file_initial_name ? file_initial_name : "",
+            inputAttributes: {
+                placeholder: "File name"
+            }
+        });
+
+        if (swal_result.isConfirmed) {
+            var response = await Requests.CreatePath(this.current_path, swal_result.value, false, 700);
+            if (response.success) {
+                this.loadChildren();
+            }
+            else if (response.status_code === 404) {
+                // parent path not found
+                await Swal.fire({
+                    icon: "error",
+                    title: "Parent folder not found!",
+                    text: `Path ${this.current_path} does not exist!`
+                });
+                console.log(this.current_path)
+            }
+            else if (response.status_code === 409) {
+                // folder already exists
+                await Swal.fire({
+                    icon: "error",
+                    title: "Item already exists!",
+                    text: `Item with name ${swal_result.value} alredy exists!`
+                });
+                this.createFile(swal_result.value);
+            }
+            else {
+                await Swal.fire({
+                    icon: "error",
+                    title: "Cannot create folder",
+                    text: `Unknown error ${response.status_code}`
+                });
+            }
+        }
+    }
 
     render(): React.ReactNode {
         return (
@@ -142,7 +206,7 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                             <li className="dropdown-element">
                                 <span className="dropdown-header">
                                     <FontAwesomeIcon icon={faCaretDown} className="dropdown" />
-                                    <img src={folder_icon} className="type" alt=""/>
+                                    <img src={folder_icon} className="type" alt="" />
                                     <span className="name">{this.state.folder_name}</span>
                                 </span>
                                 <ul>

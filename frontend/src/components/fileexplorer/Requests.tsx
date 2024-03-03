@@ -52,6 +52,14 @@ export class Requests extends React.Component {
         return req_resp;
     }
 
+    /**
+     * 
+     * @param path 
+     * @param name 
+     * @param is_directory 
+     * @param permissions 
+     * @returns 
+     */
     static async CreatePath(path:string, name:string, is_directory:boolean, permissions:number) {
         var req_resp: RequestsResponse;
         try{
