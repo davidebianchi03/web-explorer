@@ -1,0 +1,161 @@
+.file-explorer {
+    width: 100%;
+    height: 100%;
+}
+
+.file-explorer .titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    background-color: #f1f1f1;
+}
+
+.file-explorer .titlebar-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 10px;
+    user-select: none;
+    cursor: pointer;
+}
+
+.file-explorer .titlebar-option:hover {
+    background-color: #e9e9e9;
+}
+
+.file-explorer .titlebar-option .title {
+    font-size: 16px;
+    margin: 2px;
+}
+
+.file-explorer .titlebar-option .icon {
+    font-size: 14px;
+    margin: 2px;
+    color: #969595;
+}
+
+.file-explorer .search-bar {
+    background-color: #fff;
+    padding: 5px;
+    user-select: none;
+    border-top: solid #cacaca 1.5px;
+}
+
+.file-explorer .search-bar span {
+    font-size: 14px;
+    margin-right: 25px;
+    font-weight: bold;
+}
+
+.file-explorer .search-bar input {
+    border: solid gray 1px;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    outline: none;
+    width: 75%;
+    max-width: 250px;
+}
+
+.file-explorer .search-bar input:focus {
+    box-shadow: 0px 0px 2px 2px rgba(0, 81, 255, 0.637);
+    outline: none;
+}
+
+.file-explorer .explorer {
+    display: flex;
+}
+
+.file-explorer .explorer .tree {
+    width: 30%;
+    max-width: 500px;
+    border: solid #cacaca 1.5px;
+    height: 100vh;
+}
+
+.file-explorer .explorer .tree ul{
+    padding: 0px;
+    padding-left: 10px;
+    list-style: none;
+}
+
+.file-explorer .explorer .tree .dropdown-element {
+    /* display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    user-select: none; */
+    padding-left: 10px;
+}
+
+.file-explorer .explorer .tree .dropdown-element .dropdown-header {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    user-select: none;
+}
+
+.file-explorer .explorer .tree .dropdown-element .dropdown-header .dropdown {
+   font-size: 15px;
+}
+
+.file-explorer .explorer .tree .dropdown-element .dropdown-header .type {
+    width: 25px;
+    height: 25px;
+    margin: 0px 5px;
+}
+
+.file-explorer .explorer .tree .dropdown-element .dropdown-header .name {
+    width: 100%;
+    margin: 0px 5px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.file-explorer .explorer .files {
+    width: 100%;
+    height: 100vh;
+}
+
+.file-explorer .explorer .files .row {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-size: 14px;
+    user-select: none;
+}
+
+.file-explorer .explorer .files .row:hover {
+    background-color: #f3f3f3;
+    cursor: pointer;
+}
+
+.file-explorer .explorer .files .row.header {
+    background-color: #f1f1f1;
+    border-top: solid #cacaca 1.5px;
+    border-bottom: solid #cacaca 1.5px;
+    font-weight: bold;
+}
+
+.file-explorer .explorer .files .row .type {
+    width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 2px;
+}
+
+.file-explorer .explorer .files .row .name {
+    width: 100%;
+    padding: 0px 2px;
+}
+
+.file-explorer .explorer .files .row .modified {
+    width: 175px;
+    padding: 0px 2px;
+}
+
+.file-explorer .explorer .files .row .permissions {
+    width: 150px;
+    padding: 0px 2px;
+}

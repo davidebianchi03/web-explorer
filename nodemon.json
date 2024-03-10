@@ -1,6 +1,0 @@
-{
-    "ignore": ["node_modules"],
-    "watch": ["server"],
-    "exec": "npx ts-node ./server/server.ts",
-    "ext": "ts"
-  }
