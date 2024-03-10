@@ -39,15 +39,26 @@
     padding: 5px;
     user-select: none;
     border-top: solid #cacaca 1.5px;
+    display: flex;
+    align-content: space-between;
+    justify-items: center;
+    width: 100%;
 }
 
-.file-explorer .search-bar span {
+.file-explorer .search-bar .search-box {
+    display: flex;
+    width: 100%;
+    justify-items: center;
+}
+
+.file-explorer .search-bar .search-box span {
     font-size: 14px;
     margin-right: 25px;
     font-weight: bold;
+    margin-top: 5px;
 }
 
-.file-explorer .search-bar input {
+.file-explorer .search-bar .search-box input {
     border: solid gray 1px;
     padding: 5px 10px;
     font-size: 14px;
@@ -57,9 +68,16 @@
     max-width: 250px;
 }
 
-.file-explorer .search-bar input:focus {
+.file-explorer .search-bar .search-box input:focus {
     box-shadow: 0px 0px 2px 2px rgba(0, 81, 255, 0.637);
     outline: none;
+}
+
+.file-explorer .search-bar .up-btn {
+    margin-right: 10px;
+    border: solid rgb(170, 170, 170) 1px;
+    border-radius: 3px;
+    padding: 2px 7px;
 }
 
 .file-explorer .explorer {

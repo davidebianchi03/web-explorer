@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles/FileExplorer.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFolderPlus, faFileCirclePlus, faUpload, faRotate, faCaretDown } from '@fortawesome/free-solid-svg-icons'
+import { faFolderPlus, faFileCirclePlus, faUpload, faRotate, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { ChildItem } from "../../types";
 import folder_icon from "../../icons/folder.png";
@@ -192,6 +192,18 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
         }
     }
 
+    openParentFolder = async () => {
+        var path = (
+            this.current_path[this.current_path.length - 1] === "/" ?
+                this.current_path.substring(0, this.current_path.length - 1) :
+                this.current_path).split("/").filter((value: string) => { return value !== ""; });
+        if (path.length > 0) {
+            var new_path = [""].concat(path.filter((value: string, index: number) => { return index !== path.length - 1; })).join("/");
+            this.current_path = FixPath(new_path);
+            this.loadChildren();
+        }
+    }
+
     render(): React.ReactNode {
         return (
             <div className="file-explorer">
@@ -204,15 +216,20 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                     ))}
                 </div>
                 <div className="search-bar">
-                    <span>Files</span>
-                    <input placeholder="Search Files" onKeyDown={(e: any) => {
-                        var event = e as KeyboardEvent;
-                        if (event.key.toLowerCase() === "enter") {
-                            this.filter_text = (event.target as HTMLInputElement).value;
-                            this.loadChildren();
-                            event.preventDefault();
-                        }
-                    }} />
+                    <div className="search-box">
+                        <span>Files</span>
+                        <input placeholder="Search Files" onKeyDown={(e: any) => {
+                            var event = e as KeyboardEvent;
+                            if (event.key.toLowerCase() === "enter") {
+                                this.filter_text = (event.target as HTMLInputElement).value;
+                                this.loadChildren();
+                                event.preventDefault();
+                            }
+                        }} />
+                    </div>
+                    <button className="up-btn" onClick={this.openParentFolder}>
+                        <FontAwesomeIcon icon={faCaretUp} />
+                    </button>
                 </div>
                 <div className="explorer">
                     <div className="tree">
