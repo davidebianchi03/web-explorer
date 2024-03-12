@@ -48,7 +48,7 @@ export class Requests extends React.Component {
                 throw error;
             }
         }
-        
+
         return req_resp;
     }
 
@@ -60,9 +60,9 @@ export class Requests extends React.Component {
      * @param permissions 
      * @returns 
      */
-    static async CreatePath(path:string, name:string, is_directory:boolean, permissions:number) {
+    static async CreatePath(path: string, name: string, is_directory: boolean, permissions: number) {
         var req_resp: RequestsResponse;
-        try{
+        try {
             var response = await axios.post(
                 `${process.env.REACT_APP_BACKEND_URL}/path/${encodeURI(path)}`,
                 JSON.stringify({
@@ -77,7 +77,7 @@ export class Requests extends React.Component {
                 json_content: response.data,
                 description: ""
             }
-        }catch (error) {
+        } catch (error) {
             if (axios.isAxiosError(error)) {
                 const axiosError = error as AxiosError;
                 if (axiosError.response) {
@@ -102,4 +102,57 @@ export class Requests extends React.Component {
         }
         return req_resp;
     }
+
+    /**
+     * 
+     * @param path 
+     * @param filename 
+     * @param file 
+     * @returns 
+     */
+    static async UploadFile(path: string, filename: string, file: File) {
+        var req_resp: RequestsResponse;
+        try {
+            const form_data = new FormData();
+            form_data.append("file", file);
+            form_data.append("filename", filename);
+            var response = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/upload/${encodeURI(path)}`, form_data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            }
+            );
+            req_resp = {
+                success: true,
+                status_code: response.status,
+                json_content: response.data,
+                description: ""
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError;
+                if (axiosError.response) {
+                    req_resp = {
+                        success: false,
+                        status_code: axiosError.response.status,
+                        json_content: axiosError.response.data,
+                        description: ""
+                    }
+                } else {
+                    req_resp = {
+                        success: false,
+                        status_code: -1,
+                        json_content: null,
+                        description: axiosError.message
+                    }
+                }
+
+            } else {
+                throw error;
+            }
+        }
+        return req_resp;
+    }
+
 }

@@ -88,10 +88,9 @@
     width: 30%;
     max-width: 500px;
     border: solid #cacaca 1.5px;
-    height: 100vh;
 }
 
-.file-explorer .explorer .tree ul{
+.file-explorer .explorer .tree ul {
     padding: 0px;
     padding-left: 10px;
     list-style: none;
@@ -114,7 +113,7 @@
 }
 
 .file-explorer .explorer .tree .dropdown-element .dropdown-header .dropdown {
-   font-size: 15px;
+    font-size: 15px;
 }
 
 .file-explorer .explorer .tree .dropdown-element .dropdown-header .type {
@@ -132,7 +131,25 @@
 
 .file-explorer .explorer .files {
     width: 100%;
-    height: 100vh;
+}
+
+.file-explorer .explorer .files .file-list {
+    width: 100%;
+    height: calc(100vh - 95px);
+    overflow-y: auto;
+}
+
+.file-explorer .explorer .files .file-list .dropzone {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.808);
+    color: #fff;
+    font-size: larger;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .file-explorer .explorer .files .row {

@@ -16,7 +16,8 @@ type FileExplorerProps = {
 
 type FileExplorerState = {
     folder_name: string,
-    children: ChildItem[]
+    children: ChildItem[],
+    show_dropzone: boolean,
 }
 
 type TitleBarOption = {
@@ -65,7 +66,8 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
         this.filter_text = "";
         this.state = {
             folder_name: "/",
-            children: []
+            children: [],
+            show_dropzone: false,
         }
     }
 
@@ -204,6 +206,23 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
         }
     }
 
+    uploadFiles = async (files: FileList) => {
+        if (files.length > 0) {
+            var destination_path = FixPath(this.current_path);
+            for (var i = 0; i < files.length; i++) {
+                var filename = files[i].name;
+                // TODO: if file alredy exists ask before overwrite file
+                var file_upload_result = await Requests.UploadFile(destination_path, filename, files[i]);
+                if (!file_upload_result.success) {
+                    await Swal.fire(`Error uploading ${filename}`, file_upload_result.status_code.toString(), "error");
+                }
+            }
+            this.loadChildren();
+        } else {
+            Swal.fire("Error", "No file dropped in!", "error");
+        }
+    }
+
     render(): React.ReactNode {
         return (
             <div className="file-explorer">
@@ -232,7 +251,7 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                     </button>
                 </div>
                 <div className="explorer">
-                    <div className="tree">
+                    {/* <div className="tree">
                         <ul>
                             <li className="dropdown-element">
                                 <span className="dropdown-header">
@@ -245,7 +264,7 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                                 </ul>
                             </li>
                         </ul>
-                    </div>
+                    </div> */}
                     <div className="files">
                         <div className="row header">
                             <div className="type">
@@ -261,29 +280,57 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                                 <span>Permissions</span>
                             </div>
                         </div>
-                        {this.state.children.map(child => (
-                            <div className="row" onDoubleClick={() => this.openChildItem(child)}>
-                                <div className="type">
-                                    <img src={child.is_directory ? folder_icon : file_icon} width={25} height={25} alt="type" />
+                        <div className="file-list"
+                            onDragOver={
+                                (event: any) => {
+                                    event.preventDefault();
+                                    this.setState({ show_dropzone: true });
+                                }}
+                        >
+                            {this.state.children.map(child => (
+                                <div className="row" onDoubleClick={() => this.openChildItem(child)}>
+                                    <div className="type">
+                                        <img src={child.is_directory ? folder_icon : file_icon} width={25} height={25} alt="type" />
+                                    </div>
+                                    <div className="name">
+                                        <span>{child.name}</span>
+                                    </div>
+                                    <div className="modified">
+                                        <span>
+                                            {
+                                                `
+                                                    ${new Date(child.modification_time).toLocaleDateString()} 
+                                                    ${PadWithZero(new Date(child.modification_time).getHours())}:${PadWithZero(new Date(child.modification_time).getMinutes())}
+                                                `
+                                            }
+                                        </span>
+                                    </div>
+                                    <div className="permissions">
+                                        <span>{child.permissions}</span>
+                                    </div>
                                 </div>
-                                <div className="name">
-                                    <span>{child.name}</span>
-                                </div>
-                                <div className="modified">
-                                    <span>
-                                        {
-                                            `
-                                            ${new Date(child.modification_time).toLocaleDateString()} 
-                                            ${PadWithZero(new Date(child.modification_time).getHours())}:${PadWithZero(new Date(child.modification_time).getMinutes())}
-                                        `
-                                        }
-                                    </span>
-                                </div>
-                                <div className="permissions">
-                                    <span>{child.permissions}</span>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                            {
+                                this.state.show_dropzone ?
+                                    <div className="dropzone"
+                                        onDragLeave={(event: any) => {
+                                            event.preventDefault();
+                                            this.setState({ show_dropzone: false });
+                                        }}
+
+                                        onDrop={(event: React.DragEvent<HTMLDivElement>) => {
+                                            event.preventDefault();
+                                            this.setState({ show_dropzone: false });
+                                            this.uploadFiles(event.dataTransfer.files);
+                                        }}
+                                    >
+                                        <p>Drop here files to upload</p>
+                                    </div>
+                                    :
+                                    <div></div>
+                            }
+                        </div>
+
                     </div>
                 </div>
             </div>

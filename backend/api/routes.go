@@ -17,4 +17,7 @@ func Routes(route *gin.Engine) {
 
 	download := route.Group("/download")
 	download.GET("/*path", PathDownload)
+
+	upload := route.Group("/upload")
+	upload.POST("/*path", PathUpload)
 }
