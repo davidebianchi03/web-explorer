@@ -18,9 +18,19 @@ type FileExplorerState = {
     folder_name: string,
     children: ChildItem[],
     show_dropzone: boolean,
+    show_context_menu: boolean,
+    context_menu_x: number,
+    context_menu_y: number,
 }
 
 type TitleBarOption = {
+    key: number,
+    title: string,
+    icon: IconProp,
+    callback: Function,
+}
+
+type ContextMenuOption = {
     key: number,
     title: string,
     icon: IconProp,
@@ -38,17 +48,17 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
             callback: () => this.createFolder(""),
         },
         {
-            key: 1,
+            key: 2,
             title: "New File",
             icon: faFileCirclePlus,
             callback: () => this.createFile(""),
         },
-        {
-            key: 2,
-            title: "Upload",
-            icon: faUpload,
-            callback: () => { }
-        },
+        // {
+        //     key: 2,
+        //     title: "Upload",
+        //     icon: faUpload,
+        //     callback: () => { }
+        // },
         {
             key: 3,
             title: "Refresh",
@@ -56,6 +66,15 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
             callback: () => this.loadChildren(),
         }
     ]
+
+    context_menu_options: ContextMenuOption[] = [
+        {
+            key: 1,
+            title: "Open",
+            icon: faRotate,
+            callback: () => { },
+        }
+    ];
 
     current_path: string;
     filter_text: string;
@@ -68,6 +87,9 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
             folder_name: "/",
             children: [],
             show_dropzone: false,
+            show_context_menu: false,
+            context_menu_x: 0,
+            context_menu_y: 0,
         }
     }
 
@@ -288,7 +310,19 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                                 }}
                         >
                             {this.state.children.map(child => (
-                                <div className="row" onDoubleClick={() => this.openChildItem(child)}>
+                                <div className="row"
+                                    onDoubleClick={() => this.openChildItem(child)}
+                                    onContextMenu={
+                                        (event: React.MouseEvent<HTMLDivElement>) => {
+                                            event.preventDefault();
+                                            this.setState(
+                                                {
+                                                    show_context_menu: true,
+                                                    context_menu_x: event.clientX,
+                                                    context_menu_y: event.clientY
+                                                });
+                                        }
+                                    }>
                                     <div className="type">
                                         <img src={child.is_directory ? folder_icon : file_icon} width={25} height={25} alt="type" />
                                     </div>
@@ -325,6 +359,22 @@ export default class FileExplorer extends React.Component<FileExplorerProps> {
                                         }}
                                     >
                                         <p>Drop here files to upload</p>
+                                    </div>
+                                    :
+                                    <div></div>
+                            }
+                            {
+                                this.state.show_context_menu ?
+                                    <div className="context_menu" style={{ top: this.state.context_menu_y, left: this.state.context_menu_x }}>
+                                        {
+                                            this.context_menu_options.map(
+                                                (obj: ContextMenuOption) =>
+                                                    <div className="context_menu_option">
+                                                        <FontAwesomeIcon icon={obj.icon} className="context_menu_icon"/>
+                                                        <span>{obj.title}</span>
+                                                    </div>
+                                            )
+                                        }
                                     </div>
                                     :
                                     <div></div>
